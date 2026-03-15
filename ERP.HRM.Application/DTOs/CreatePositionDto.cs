@@ -8,7 +8,10 @@ namespace ERP.HRM.Application.DTOs
 {
     public class CreatePositionDto
     {
-        public string PositionName { get; set; } = null!;
+        public string PositionName { get; set; }
+        public string PositionCode { get; set; }
+        public decimal? Allowance { get; set; }
+        public int? Level { get; set; }
         public string? Description { get; set; }
     }
 }
