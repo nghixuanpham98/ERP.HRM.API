@@ -1,4 +1,5 @@
-﻿using ERP.HRM.Domain.Interfaces.Repositories;
+﻿using ERP.HRM.API;
+using ERP.HRM.Domain.Interfaces.Repositories;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

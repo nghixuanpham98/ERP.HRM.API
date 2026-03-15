@@ -2,7 +2,7 @@ using AutoMapper;
 using ERP.HRM.Application.DTOs;
 using ERP.HRM.Application.Interfaces;
 using ERP.HRM.Domain.Interfaces.Repositories;
-using ERP.HRM.Infrastructure;
+using ERP.HRM.API;
 using System;
 using System.Collections.Generic;
 using System.Linq;
