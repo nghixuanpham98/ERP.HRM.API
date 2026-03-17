@@ -8,6 +8,7 @@ namespace ERP.HRM.Application.DTOs
 {
     public class UpdateEmployeeDto
     {
+        public int EmployeeId { get; set; }
         public string FullName { get; set; }
         public DateOnly? DateOfBirth { get; set; }
         public string? Gender { get; set; }

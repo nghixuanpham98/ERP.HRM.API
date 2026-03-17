@@ -45,5 +45,15 @@ namespace ERP.HRM.Infrastructure.Repositories
                 await _context.SaveChangesAsync();
             }
         }
+
+        public async Task<bool> ExistsByNameAsync(string departmentName)
+        {
+            return await _context.Departments.AnyAsync(d => d.DepartmentName == departmentName);
+        }
+
+        public async Task<int> GetEmployeeCountAsync(int departmentId)
+        {
+            return await _context.Employees.CountAsync(e => e.DepartmentId == departmentId);
+        }
     }
 }

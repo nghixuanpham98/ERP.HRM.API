@@ -1,8 +1,9 @@
 using AutoMapper;
-using ERP.HRM.Application.DTOs;
-using ERP.HRM.Application.Interfaces;
-using ERP.HRM.Domain.Interfaces.Repositories;
 using ERP.HRM.API;
+using ERP.HRM.Application.DTOs;
+using ERP.HRM.Application.Interfaces.Services;
+using ERP.HRM.Domain.Exceptions;
+using ERP.HRM.Domain.Interfaces.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,23 +32,41 @@ namespace ERP.HRM.Application.Services
         public async Task<EmployeeDto?> GetEmployeeByIdAsync(int id)
         {
             var employee = await _employeeRepository.GetByIdAsync(id);
-            return _mapper.Map<EmployeeDto?>(employee);
+            if (employee == null)
+                throw new NotFoundException($"Employee with Id {id} not found");
+
+            return _mapper.Map<EmployeeDto>(employee);
         }
 
-        public async Task AddEmployeeAsync(CreateEmployeeDto dto)
+        public async Task<EmployeeDto> AddEmployeeAsync(CreateEmployeeDto dto)
         {
+            if (string.IsNullOrWhiteSpace(dto.FullName))
+                throw new ValidationException("FullName is required");
+
             var employee = _mapper.Map<Employee>(dto);
             await _employeeRepository.AddAsync(employee);
+
+            return _mapper.Map<EmployeeDto>(employee);
         }
 
-        public async Task UpdateEmployeeAsync(UpdateEmployeeDto dto)
+        public async Task<EmployeeDto> UpdateEmployeeAsync(UpdateEmployeeDto dto)
         {
-            var employee = _mapper.Map<Employee>(dto);
+            var employee = await _employeeRepository.GetByIdAsync(dto.EmployeeId);
+            if (employee == null)
+                throw new NotFoundException($"Employee with Id {dto.EmployeeId} not found");
+
+            _mapper.Map(dto, employee);
             await _employeeRepository.UpdateAsync(employee);
+
+            return _mapper.Map<EmployeeDto>(employee);
         }
 
         public async Task DeleteEmployeeAsync(int id)
         {
+            var employee = await _employeeRepository.GetByIdAsync(id);
+            if (employee == null)
+                throw new NotFoundException($"Employee with Id {id} not found");
+
             await _employeeRepository.DeleteAsync(id);
         }
     }

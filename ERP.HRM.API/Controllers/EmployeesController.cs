@@ -1,0 +1,60 @@
+using ERP.HRM.Application.Common;
+using ERP.HRM.Application.DTOs;
+using ERP.HRM.Application.Interfaces.Services;
+using ERP.HRM.Domain.Interfaces.Repositories;
+using ERP.HRM.Infrastructure;
+using Microsoft.AspNetCore.Mvc;
+
+namespace ERP.HRM.API.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class EmployeeController : ControllerBase
+    {
+        private readonly IEmployeeService _employeeService;
+
+        public EmployeeController(IEmployeeService employeeService)
+        {
+            _employeeService = employeeService;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAllEmployees()
+        {
+            var employees = await _employeeService.GetAllEmployeesAsync();
+            return Ok(new ApiResponse<IEnumerable<EmployeeDto>>(true, "Danh sách nhân viên", employees));
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetEmployeeById(int id)
+        {
+            var employee = await _employeeService.GetEmployeeByIdAsync(id);
+            return Ok(new ApiResponse<EmployeeDto?>(true, "Chi tiết nhân viên", employee));
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateEmployee([FromBody] CreateEmployeeDto dto)
+        {
+            var employee = await _employeeService.AddEmployeeAsync(dto);
+            return Ok(new ApiResponse<EmployeeDto>(true, "Tạo nhân viên thành công", employee));
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateEmployee(int id, [FromBody] UpdateEmployeeDto dto)
+        {
+            // đảm bảo id trong URL khớp với dto.EmployeeId
+            if (id != dto.EmployeeId)
+                return BadRequest(new ApiResponse<string>(false, "Id không khớp", null));
+
+            var employee = await _employeeService.UpdateEmployeeAsync(dto);
+            return Ok(new ApiResponse<EmployeeDto>(true, "Cập nhật nhân viên thành công", employee));
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteEmployee(int id)
+        {
+            await _employeeService.DeleteEmployeeAsync(id);
+            return Ok(new ApiResponse<string>(true, "Xóa nhân viên thành công", null));
+        }
+    }
+}

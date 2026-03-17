@@ -1,5 +1,6 @@
 using ERP.HRM.API;
-using ERP.HRM.Application.Interfaces;
+using ERP.HRM.API.Middlewares;
+using ERP.HRM.Application.Interfaces.Services;
 using ERP.HRM.Application.Mappings;
 using ERP.HRM.Application.Services;
 using ERP.HRM.Domain.Interfaces.Repositories;
@@ -18,9 +19,10 @@ builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IPositionRepository, PositionRepository>();
 
+// Services
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
-//builder.Services.AddScoped<IEmployeeService, EmployeeService>();
-//builder.Services.AddScoped<IPositionService, PositionService>();
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IPositionService, PositionService>();
 
 // AutoMapper
 builder.Services.AddAutoMapper(typeof(MappingProfile));
@@ -42,6 +44,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.MapControllers();
 

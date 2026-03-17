@@ -42,4 +42,14 @@ public class PositionRepository : IPositionRepository
             await _context.SaveChangesAsync();
         }
     }
+
+    public async Task<bool> ExistsByCodeAsync(string positionCode)
+    {
+        return await _context.Positions.AnyAsync(p => p.PositionCode == positionCode);
+    }
+
+    public async Task<int> GetEmployeeCountAsync(int positionId)
+    {
+        return await _context.Employees.CountAsync(e => e.PositionId == positionId);
+    }
 }

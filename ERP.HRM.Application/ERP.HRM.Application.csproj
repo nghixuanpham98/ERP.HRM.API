@@ -16,8 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="UseCases\" />
-    <Folder Include="Validators\" />
+    <Folder Include="Interfaces\Repositories\" />
   </ItemGroup>
 
 </Project>

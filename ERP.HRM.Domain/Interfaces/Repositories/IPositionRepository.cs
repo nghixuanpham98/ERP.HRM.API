@@ -14,5 +14,7 @@ namespace ERP.HRM.Domain.Interfaces.Repositories
         Task AddAsync(Position position);
         Task UpdateAsync(Position position);
         Task DeleteAsync(int id);
+        Task<bool> ExistsByCodeAsync(string positionCode);
+        Task<int> GetEmployeeCountAsync(int positionId);
     }
 }
