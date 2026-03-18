@@ -1,3 +1,4 @@
+using ERP.HRM.Application.Common;
 using ERP.HRM.Application.DTOs;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ namespace ERP.HRM.Application.Interfaces
 {
     public interface IPositionService
     {
-        Task<IEnumerable<PositionDto>> GetAllPositionsAsync();
+        Task<PagedResult<PositionDto>> GetAllPositionsAsync(int pageNumber, int pageSize);
         Task<PositionDto> GetPositionByIdAsync(int id);
         Task<PositionDto> AddPositionAsync(CreatePositionDto dto);
         Task<PositionDto> UpdatePositionAsync(UpdatePositionDto dto);

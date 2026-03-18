@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ERP.HRM.API;
+using ERP.HRM.Application.Common;
 using ERP.HRM.Application.DTOs;
 using ERP.HRM.Application.Interfaces;
 using ERP.HRM.Domain.Exceptions;
@@ -23,10 +24,17 @@ namespace ERP.HRM.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<DepartmentDto>> GetAllDepartmentsAsync()
+        public async Task<PagedResult<DepartmentDto>> GetAllDepartmentsAsync(int pageNumber, int pageSize)
         {
-            var departments = await _departmentRepository.GetAllAsync();
-            return _mapper.Map<IEnumerable<DepartmentDto>>(departments);
+            var (departments, totalCount) = await _departmentRepository.GetPagedAsync(pageNumber, pageSize);
+
+            return new PagedResult<DepartmentDto>
+            {
+                Items = _mapper.Map<IEnumerable<DepartmentDto>>(departments),
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
         }
 
         public async Task<DepartmentDto> GetDepartmentByIdAsync(int id)

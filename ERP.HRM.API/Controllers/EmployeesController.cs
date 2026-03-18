@@ -19,10 +19,10 @@ namespace ERP.HRM.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllEmployees()
+        public async Task<IActionResult> GetAllEmployees(int pageNumber = 1, int pageSize = 10)
         {
-            var employees = await _employeeService.GetAllEmployeesAsync();
-            return Ok(new ApiResponse<IEnumerable<EmployeeDto>>(true, "Danh sách nhân viên", employees));
+            var employees = await _employeeService.GetAllEmployeesAsync(pageNumber, pageSize);
+            return Ok(new ApiResponse<PagedResult<EmployeeDto>>(true, "Danh sách nhân viên", employees));
         }
 
         [HttpGet("{id}")]

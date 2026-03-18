@@ -52,4 +52,14 @@ public class PositionRepository : IPositionRepository
     {
         return await _context.Employees.CountAsync(e => e.PositionId == positionId);
     }
+
+    public async Task<(IEnumerable<Position>, int)> GetPagedAsync(int pageNumber, int pageSize)
+    {
+        var positions = await _context.Positions
+            .FromSqlRaw("EXEC sp_GetPositionsPaged @PageNumber={0}, @PageSize={1}", pageNumber, pageSize)
+            .ToListAsync();
+
+        var totalCount = await _context.Positions.CountAsync();
+        return (positions, totalCount);
+    }
 }

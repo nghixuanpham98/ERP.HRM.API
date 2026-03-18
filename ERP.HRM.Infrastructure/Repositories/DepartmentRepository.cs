@@ -55,5 +55,15 @@ namespace ERP.HRM.Infrastructure.Repositories
         {
             return await _context.Employees.CountAsync(e => e.DepartmentId == departmentId);
         }
+
+        public async Task<(IEnumerable<Department>, int)> GetPagedAsync(int pageNumber, int pageSize)
+        {
+            var departments = await _context.Departments
+                .FromSqlRaw("EXEC sp_GetDepartmentsPaged @PageNumber={0}, @PageSize={1}", pageNumber, pageSize)
+                .ToListAsync();
+
+            var totalCount = await _context.Departments.CountAsync();
+            return (departments, totalCount);
+        }
     }
 }

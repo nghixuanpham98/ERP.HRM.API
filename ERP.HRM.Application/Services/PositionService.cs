@@ -1,5 +1,6 @@
 using AutoMapper;
 using ERP.HRM.API;
+using ERP.HRM.Application.Common;
 using ERP.HRM.Application.DTOs;
 using ERP.HRM.Application.Interfaces;
 using ERP.HRM.Domain.Exceptions;
@@ -23,10 +24,17 @@ namespace ERP.HRM.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<PositionDto>> GetAllPositionsAsync()
+        public async Task<PagedResult<PositionDto>> GetAllPositionsAsync(int pageNumber, int pageSize)
         {
-            var positions = await _positionRepository.GetAllAsync();
-            return _mapper.Map<IEnumerable<PositionDto>>(positions);
+            var (positions, totalCount) = await _positionRepository.GetPagedAsync(pageNumber, pageSize);
+
+            return new PagedResult<PositionDto>
+            {
+                Items = _mapper.Map<IEnumerable<PositionDto>>(positions),
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
         }
 
         public async Task<PositionDto> GetPositionByIdAsync(int id)

@@ -19,10 +19,10 @@ namespace ERP.HRM.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllDepartments()
+        public async Task<IActionResult> GetAllDepartments(int pageNumber = 1, int pageSize = 10)
         {
-            var departments = await _departmentService.GetAllDepartmentsAsync();
-            return Ok(new ApiResponse<IEnumerable<DepartmentDto>>(true, "Danh sách phòng ban", departments));
+            var departments = await _departmentService.GetAllDepartmentsAsync(pageNumber, pageSize);
+            return Ok(new ApiResponse<PagedResult<DepartmentDto>>(true, "Danh sách phòng ban", departments));
         }
 
         [HttpGet("{id}")]

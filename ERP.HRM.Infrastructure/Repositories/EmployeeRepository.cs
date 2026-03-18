@@ -66,14 +66,11 @@ public class EmployeeRepository : IEmployeeRepository, IPagedRepository<Employee
 
     public async Task<(IEnumerable<Employee>, int)> GetPagedAsync(int pageNumber, int pageSize)
     {
-        // Gọi stored procedure sp_GetEmployeesPaged
         var employees = await _context.Employees
             .FromSqlRaw("EXEC sp_GetEmployeesPaged @PageNumber={0}, @PageSize={1}", pageNumber, pageSize)
             .ToListAsync();
 
-        // Tổng số bản ghi (có thể lấy từ SP hoặc CountAsync)
         var totalCount = await _context.Employees.CountAsync();
-
         return (employees, totalCount);
     }
 }

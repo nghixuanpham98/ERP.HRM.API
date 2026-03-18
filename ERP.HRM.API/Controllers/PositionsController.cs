@@ -1,3 +1,4 @@
+using ERP.HRM.Application.Common;
 using ERP.HRM.Application.DTOs;
 using ERP.HRM.Application.Interfaces;
 using ERP.HRM.Domain.Interfaces.Repositories;
@@ -8,49 +9,51 @@ namespace ERP.HRM.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class PositionsController : ControllerBase
+    public class PositionController : ControllerBase
     {
         private readonly IPositionService _positionService;
 
-        public PositionsController(IPositionService positionService)
+        public PositionController(IPositionService positionService)
         {
             _positionService = positionService;
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PositionDto>>> GetAll()
+        public async Task<IActionResult> GetAllPositions(int pageNumber = 1, int pageSize = 10)
         {
-            var result = await _positionService.GetAllPositionsAsync();
-            return Ok(result);
+            var positions = await _positionService.GetAllPositionsAsync(pageNumber, pageSize);
+            return Ok(new ApiResponse<PagedResult<PositionDto>>(true, "Danh sách chức vụ", positions));
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<PositionDto?>> GetById(int id)
+        public async Task<IActionResult> GetPositionById(int id)
         {
-            var dto = await _positionService.GetPositionByIdAsync(id);
-            if (dto is null) return NotFound();
-            return Ok(dto);
+            var position = await _positionService.GetPositionByIdAsync(id);
+            return Ok(new ApiResponse<PositionDto>(true, "Chi tiết chức vụ", position));
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CreatePositionDto dto)
+        public async Task<IActionResult> CreatePosition([FromBody] CreatePositionDto dto)
         {
-            await _positionService.AddPositionAsync(dto);
-            return NoContent();
+            var position = await _positionService.AddPositionAsync(dto);
+            return Ok(new ApiResponse<PositionDto>(true, "Tạo chức vụ thành công", position));
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update([FromBody] UpdatePositionDto dto)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdatePosition(int id, [FromBody] UpdatePositionDto dto)
         {
-            await _positionService.UpdatePositionAsync(dto);
-            return NoContent();
+            if (id != dto.PositionId)
+                return BadRequest(new ApiResponse<string>(false, "Id không khớp", null));
+
+            var position = await _positionService.UpdatePositionAsync(dto);
+            return Ok(new ApiResponse<PositionDto>(true, "Cập nhật chức vụ thành công", position));
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeletePosition(int id)
         {
             await _positionService.DeletePositionAsync(id);
-            return NoContent();
+            return Ok(new ApiResponse<string>(true, "Xóa chức vụ thành công", null));
         }
     }
 }

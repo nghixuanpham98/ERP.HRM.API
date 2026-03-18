@@ -1,4 +1,5 @@
 using ERP.HRM.API;
+using ERP.HRM.Application.Interfaces.Repositories;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ERP.HRM.Domain.Interfaces.Repositories
 {
-    public interface IPositionRepository
+    public interface IPositionRepository : IPagedRepository<Position>
     {
         Task<IEnumerable<Position>> GetAllAsync();
         Task<Position?> GetByIdAsync(int id);

@@ -1,4 +1,5 @@
-﻿using ERP.HRM.Application.DTOs;
+﻿using ERP.HRM.Application.Common;
+using ERP.HRM.Application.DTOs;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace ERP.HRM.Application.Interfaces
 {
     public interface IDepartmentService
     {
-        Task<IEnumerable<DepartmentDto>> GetAllDepartmentsAsync();
+        Task<PagedResult<DepartmentDto>> GetAllDepartmentsAsync(int pageNumber, int pageSize);
         Task<DepartmentDto> GetDepartmentByIdAsync(int id);
         Task<DepartmentDto> AddDepartmentAsync(CreateDepartmentDto dto);
         Task<DepartmentDto> UpdateDepartmentAsync(UpdateDepartmentDto dto);

@@ -1,5 +1,6 @@
 using AutoMapper;
 using ERP.HRM.API;
+using ERP.HRM.Application.Common;
 using ERP.HRM.Application.DTOs;
 using ERP.HRM.Application.Interfaces;
 using ERP.HRM.Domain.Exceptions;
@@ -23,10 +24,17 @@ namespace ERP.HRM.Application.Services
             _mapper = mapper;
         }
 
-        public async Task<IEnumerable<EmployeeDto>> GetAllEmployeesAsync()
+        public async Task<PagedResult<EmployeeDto>> GetAllEmployeesAsync(int pageNumber, int pageSize)
         {
-            var employees = await _employeeRepository.GetAllAsync();
-            return _mapper.Map<IEnumerable<EmployeeDto>>(employees);
+            var (employees, totalCount) = await _employeeRepository.GetPagedAsync(pageNumber, pageSize);
+
+            return new PagedResult<EmployeeDto>
+            {
+                Items = _mapper.Map<IEnumerable<EmployeeDto>>(employees),
+                TotalCount = totalCount,
+                PageNumber = pageNumber,
+                PageSize = pageSize
+            };
         }
 
         public async Task<EmployeeDto?> GetEmployeeByIdAsync(int id)

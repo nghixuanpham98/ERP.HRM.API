@@ -10,7 +10,7 @@ namespace ERP.HRM.Application.Interfaces
 {
     public interface IEmployeeService
     {
-        Task<IEnumerable<EmployeeDto>> GetAllEmployeesAsync();
+        Task<PagedResult<EmployeeDto>> GetAllEmployeesAsync(int pageNumber, int pageSize);
         Task<EmployeeDto?> GetEmployeeByIdAsync(int id);
         Task<EmployeeDto> AddEmployeeAsync(CreateEmployeeDto dto);
         Task<EmployeeDto> UpdateEmployeeAsync(UpdateEmployeeDto dto);
