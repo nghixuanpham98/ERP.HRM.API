@@ -1,7 +1,7 @@
 using AutoMapper;
 using ERP.HRM.API;
 using ERP.HRM.Application.DTOs;
-using ERP.HRM.Application.Interfaces.Services;
+using ERP.HRM.Application.Interfaces;
 using ERP.HRM.Domain.Exceptions;
 using ERP.HRM.Domain.Interfaces.Repositories;
 using System;

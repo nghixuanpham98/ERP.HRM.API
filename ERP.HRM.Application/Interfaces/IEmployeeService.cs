@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ERP.HRM.Application.Interfaces.Services
+namespace ERP.HRM.Application.Interfaces
 {
     public interface IEmployeeService
     {

@@ -1,6 +1,6 @@
 using ERP.HRM.API;
 using ERP.HRM.API.Middlewares;
-using ERP.HRM.Application.Interfaces.Services;
+using ERP.HRM.Application.Interfaces;
 using ERP.HRM.Application.Mappings;
 using ERP.HRM.Application.Services;
 using ERP.HRM.Domain.Interfaces.Repositories;

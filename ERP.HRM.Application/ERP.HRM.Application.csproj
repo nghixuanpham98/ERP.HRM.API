@@ -15,8 +15,4 @@
     <ProjectReference Include="..\ERP.HRM.Domain\ERP.HRM.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Interfaces\Repositories\" />
-  </ItemGroup>
-
 </Project>
