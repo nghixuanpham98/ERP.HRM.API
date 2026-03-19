@@ -1,5 +1,5 @@
 using ERP.HRM.Application.Common;
-using ERP.HRM.Application.DTOs;
+using ERP.HRM.Application.DTOs.Employee;
 using System;
 using System.Collections.Generic;
 using System.Linq;

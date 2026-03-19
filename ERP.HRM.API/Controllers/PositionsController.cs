@@ -1,14 +1,16 @@
 using ERP.HRM.Application.Common;
-using ERP.HRM.Application.DTOs;
+using ERP.HRM.Application.DTOs.Position;
 using ERP.HRM.Application.Interfaces;
 using ERP.HRM.Domain.Interfaces.Repositories;
 using ERP.HRM.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ERP.HRM.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class PositionController : ControllerBase
     {
         private readonly IPositionService _positionService;
@@ -33,6 +35,7 @@ namespace ERP.HRM.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreatePosition([FromBody] CreatePositionDto dto)
         {
             var position = await _positionService.AddPositionAsync(dto);
@@ -40,6 +43,7 @@ namespace ERP.HRM.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdatePosition(int id, [FromBody] UpdatePositionDto dto)
         {
             if (id != dto.PositionId)
@@ -50,6 +54,7 @@ namespace ERP.HRM.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeletePosition(int id)
         {
             await _positionService.DeletePositionAsync(id);

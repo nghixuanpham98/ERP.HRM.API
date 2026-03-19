@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ERP.HRM.Application.DTOs
+namespace ERP.HRM.Application.DTOs.Department
 {
     public class CreateDepartmentDto
     {

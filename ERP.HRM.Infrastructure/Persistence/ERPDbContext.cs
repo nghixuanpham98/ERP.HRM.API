@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace ERP.HRM.API;
 
-public partial class ERPDbContext : DbContext
+public partial class ERPDbContext : IdentityDbContext<User, IdentityRole<Guid>, Guid>
 {
     public ERPDbContext()
     {
@@ -20,6 +22,8 @@ public partial class ERPDbContext : DbContext
     public virtual DbSet<Employee> Employees { get; set; }
 
     public virtual DbSet<Position> Positions { get; set; }
+
+    public virtual DbSet<User> Users { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Name=DefaultConnection");
@@ -120,7 +124,25 @@ public partial class ERPDbContext : DbContext
                 .HasDefaultValue("Active");
         });
 
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PK__Users__3214EC078EACC68D");
+
+            entity.HasIndex(e => e.UserName, "UQ__Users__536C85E4BDC76937").IsUnique();
+
+            entity.Property(e => e.Id).HasDefaultValueSql("(newid())");
+            entity.Property(e => e.CreatedDate).HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.PasswordHash).HasMaxLength(255);
+            entity.Property(e => e.RefreshToken).HasMaxLength(255);
+            entity.Property(e => e.Role)
+                .HasMaxLength(50)
+                .HasDefaultValue("User");
+            entity.Property(e => e.UserName).HasMaxLength(50);
+        });
+
         OnModelCreatingPartial(modelBuilder);
+
+        base.OnModelCreating(modelBuilder);
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

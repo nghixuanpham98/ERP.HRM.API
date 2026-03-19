@@ -1,15 +1,10 @@
 using AutoMapper;
 using ERP.HRM.API;
 using ERP.HRM.Application.Common;
-using ERP.HRM.Application.DTOs;
+using ERP.HRM.Application.DTOs.Employee;
 using ERP.HRM.Application.Interfaces;
 using ERP.HRM.Domain.Exceptions;
 using ERP.HRM.Domain.Interfaces.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ERP.HRM.Application.Services
 {
@@ -48,8 +43,20 @@ namespace ERP.HRM.Application.Services
 
         public async Task<EmployeeDto> AddEmployeeAsync(CreateEmployeeDto dto)
         {
+            var errors = new List<string>();
+
             if (string.IsNullOrWhiteSpace(dto.FullName))
-                throw new ValidationException("FullName is required");
+                errors.Add("FullName is required");
+
+            if (dto.DepartmentId <= 0)
+                errors.Add("DepartmentId must be valid");
+
+            if (errors.Any())
+            {
+                var ex = new ValidationException("Employee data is invalid");
+                ex.Data["Errors"] = errors;
+                throw ex;
+            }
 
             var employee = _mapper.Map<Employee>(dto);
             await _employeeRepository.AddAsync(employee);

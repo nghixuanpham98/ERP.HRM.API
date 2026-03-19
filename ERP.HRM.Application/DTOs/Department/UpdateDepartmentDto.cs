@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ERP.HRM.Application.DTOs
+namespace ERP.HRM.Application.DTOs.Department
 {
-    public class DepartmentDto
+    public class UpdateDepartmentDto
     {
         public int DepartmentId { get; set; }
         public string DepartmentName { get; set; }
@@ -14,9 +14,6 @@ namespace ERP.HRM.Application.DTOs
         public string? Status { get; set; }
         public string DepartmentCode { get; set; }
         public int? ParentDepartmentId { get; set; }
-        public int? HeadOfDepartmentId { get; set; }
-
-        // Thông tin tổng hợp
-        public int EmployeeCount { get; set; }
+        public int? HeadOfDepartmentId { get; set; } 
     }
 }

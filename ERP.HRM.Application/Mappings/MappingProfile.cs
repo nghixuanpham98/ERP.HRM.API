@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using ERP.HRM.Application.DTOs;
 using ERP.HRM.API;
 using System;
 using System.Collections.Generic;
@@ -7,6 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using ERP.HRM.Application.DTOs.Department;
+using ERP.HRM.Application.DTOs.Employee;
+using ERP.HRM.Application.DTOs.Position;
 
 namespace ERP.HRM.Application.Mappings
 {

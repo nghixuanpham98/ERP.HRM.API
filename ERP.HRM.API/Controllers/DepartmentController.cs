@@ -1,14 +1,16 @@
 using ERP.HRM.Application.Common;
-using ERP.HRM.Application.DTOs;
+using ERP.HRM.Application.DTOs.Department;
 using ERP.HRM.Application.Interfaces;
 using ERP.HRM.Domain.Interfaces.Repositories;
 using ERP.HRM.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ERP.HRM.API.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class DepartmentController : ControllerBase
     {
         private readonly IDepartmentService _departmentService;
@@ -33,6 +35,7 @@ namespace ERP.HRM.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> CreateDepartment([FromBody] CreateDepartmentDto dto)
         {
             var department = await _departmentService.AddDepartmentAsync(dto);
@@ -40,6 +43,7 @@ namespace ERP.HRM.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> UpdateDepartment(int id, [FromBody] UpdateDepartmentDto dto)
         {
             if (id != dto.DepartmentId)
@@ -50,6 +54,7 @@ namespace ERP.HRM.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteDepartment(int id)
         {
             await _departmentService.DeleteDepartmentAsync(id);

@@ -1,15 +1,10 @@
 ﻿using AutoMapper;
 using ERP.HRM.API;
 using ERP.HRM.Application.Common;
-using ERP.HRM.Application.DTOs;
+using ERP.HRM.Application.DTOs.Department;
 using ERP.HRM.Application.Interfaces;
 using ERP.HRM.Domain.Exceptions;
 using ERP.HRM.Domain.Interfaces.Repositories;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ERP.HRM.Application.Services
 {
@@ -40,7 +35,8 @@ namespace ERP.HRM.Application.Services
         public async Task<DepartmentDto> GetDepartmentByIdAsync(int id)
         {
             var department = await _departmentRepository.GetByIdAsync(id);
-            if (department == null) throw new NotFoundException($"Department with Id {id} not found");
+            if (department == null)
+                throw new NotFoundException($"Department with Id {id} not found");
 
             return _mapper.Map<DepartmentDto>(department);
         }
@@ -48,7 +44,11 @@ namespace ERP.HRM.Application.Services
         public async Task<DepartmentDto> AddDepartmentAsync(CreateDepartmentDto dto)
         {
             if (await _departmentRepository.ExistsByNameAsync(dto.DepartmentName))
-                throw new BusinessRuleException("Department name already exists");
+            {
+                var ex = new BusinessRuleException("Department name already exists");
+                ex.Data["Errors"] = new List<string> { $"Tên phòng ban '{dto.DepartmentName}' đã tồn tại" };
+                throw ex;
+            }
 
             var department = _mapper.Map<Department>(dto);
             await _departmentRepository.AddAsync(department);
@@ -59,7 +59,8 @@ namespace ERP.HRM.Application.Services
         public async Task<DepartmentDto> UpdateDepartmentAsync(UpdateDepartmentDto dto)
         {
             var department = await _departmentRepository.GetByIdAsync(dto.DepartmentId);
-            if (department == null) throw new NotFoundException($"Department with Id {dto.DepartmentId} not found");
+            if (department == null)
+                throw new NotFoundException($"Department with Id {dto.DepartmentId} not found");
 
             _mapper.Map(dto, department);
             await _departmentRepository.UpdateAsync(department);
@@ -70,7 +71,8 @@ namespace ERP.HRM.Application.Services
         public async Task DeleteDepartmentAsync(int id)
         {
             var department = await _departmentRepository.GetByIdAsync(id);
-            if (department == null) throw new NotFoundException($"Department with Id {id} not found");
+            if (department == null)
+                throw new NotFoundException($"Department with Id {id} not found");
 
             await _departmentRepository.DeleteAsync(id);
         }
