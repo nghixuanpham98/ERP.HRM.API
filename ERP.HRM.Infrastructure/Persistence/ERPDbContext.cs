@@ -1,8 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using ERP.HRM.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
 
 namespace ERP.HRM.API;
 
@@ -24,6 +25,15 @@ public partial class ERPDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
     public virtual DbSet<Position> Positions { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
+
+    public virtual DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
+
+    public virtual DbSet<Role> Roles { get; set; }
+
+    public virtual DbSet<Permission> Permissions { get; set; }
+
+    public virtual DbSet<RolePermission> RolePermissions { get; set; }
+
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Name=DefaultConnection");
@@ -139,6 +149,19 @@ public partial class ERPDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
                 .HasDefaultValue("User");
             entity.Property(e => e.UserName).HasMaxLength(50);
         });
+
+        modelBuilder.Entity<RolePermission>()
+            .HasKey(rp => new { rp.RoleId, rp.PermissionId });
+
+        modelBuilder.Entity<RolePermission>()
+            .HasOne(rp => rp.Role)
+            .WithMany(r => r.RolePermissions)
+            .HasForeignKey(rp => rp.RoleId);
+
+        modelBuilder.Entity<RolePermission>()
+            .HasOne(rp => rp.Permission)
+            .WithMany()
+            .HasForeignKey(rp => rp.PermissionId);
 
         OnModelCreatingPartial(modelBuilder);
 

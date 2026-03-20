@@ -1,10 +1,10 @@
 ﻿using ERP.HRM.API;
 using ERP.HRM.Application.DTOs.Auth;
 using ERP.HRM.Application.Interfaces;
+using ERP.HRM.Domain.Entities;
 using ERP.HRM.Domain.Exceptions;
 using ERP.HRM.Domain.Interfaces.Repositories;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -17,11 +17,19 @@ namespace ERP.HRM.Application.Services
     {
         private readonly UserManager<User> _userManager;
         private readonly IConfiguration _configuration;
+        private readonly IUserRefreshTokenRepository _refreshTokenRepository;
+        private readonly IPermissionRepository _permissionRepository;
 
-        public AuthService(UserManager<User> userManager, IConfiguration configuration)
+        public AuthService(
+            UserManager<User> userManager,
+            IConfiguration configuration,
+            IUserRefreshTokenRepository refreshTokenRepository,
+            IPermissionRepository permissionRepository)
         {
             _userManager = userManager;
             _configuration = configuration;
+            _refreshTokenRepository = refreshTokenRepository;
+            _permissionRepository = permissionRepository;
         }
 
         public async Task RegisterAsync(RegisterDto dto)
@@ -42,7 +50,6 @@ namespace ERP.HRM.Application.Services
             if (!result.Succeeded)
             {
                 var errors = result.Errors.Select(e => e.Description).ToList();
-
                 var ex = new BusinessRuleException("Đăng ký thất bại");
                 ex.Data["Errors"] = errors;
                 throw ex;
@@ -59,12 +66,19 @@ namespace ERP.HRM.Application.Services
             if (!passwordValid)
                 throw new BusinessRuleException("Sai mật khẩu");
 
-            var token = GenerateJwtToken(user);
+            var token = await GenerateJwtToken(user);
             var refreshToken = Guid.NewGuid().ToString();
 
-            user.RefreshToken = refreshToken;
-            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
-            await _userManager.UpdateAsync(user);
+            var refreshEntity = new UserRefreshToken
+            {
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
+                Token = refreshToken,
+                ExpiryDate = DateTime.UtcNow.AddDays(7),
+                IsRevoked = false
+            };
+
+            await _refreshTokenRepository.AddAsync(refreshEntity);
 
             return new AuthResponseDto
             {
@@ -76,17 +90,32 @@ namespace ERP.HRM.Application.Services
 
         public async Task<AuthResponseDto> RefreshTokenAsync(string refreshToken)
         {
-            var user = await _userManager.Users.FirstOrDefaultAsync(u => u.RefreshToken == refreshToken);
+            var refreshEntity = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
 
-            if (user == null || user.RefreshTokenExpiryTime <= DateTime.UtcNow)
+            if (refreshEntity == null || refreshEntity.ExpiryDate <= DateTime.UtcNow || refreshEntity.IsRevoked)
                 throw new BusinessRuleException("Refresh token không hợp lệ");
 
-            var newToken = GenerateJwtToken(user);
+            var user = await _userManager.FindByIdAsync(refreshEntity.UserId.ToString());
+            if (user == null)
+                throw new NotFoundException("User không tồn tại");
+
+            // revoke old token
+            await _refreshTokenRepository.RevokeAsync(refreshEntity);
+
+            // issue new token
+            var newToken = await GenerateJwtToken(user);
             var newRefreshToken = Guid.NewGuid().ToString();
 
-            user.RefreshToken = newRefreshToken;
-            user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(7);
-            await _userManager.UpdateAsync(user);
+            var newEntity = new UserRefreshToken
+            {
+                Id = Guid.NewGuid(),
+                UserId = user.Id,
+                Token = newRefreshToken,
+                ExpiryDate = DateTime.UtcNow.AddDays(7),
+                IsRevoked = false
+            };
+
+            await _refreshTokenRepository.AddAsync(newEntity);
 
             return new AuthResponseDto
             {
@@ -96,16 +125,34 @@ namespace ERP.HRM.Application.Services
             };
         }
 
-        private string GenerateJwtToken(User user)
+        public async Task LogoutAsync(string refreshToken)
         {
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+            var refreshEntity = await _refreshTokenRepository.GetByTokenAsync(refreshToken);
+            if (refreshEntity != null)
+            {
+                await _refreshTokenRepository.RevokeAsync(refreshEntity);
+            }
+        }
+
+        private async Task<string> GenerateJwtToken(User user)
+        {
+            var key = _configuration["Jwt:Key"] ?? throw new Exception("Jwt:Key not configured");
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var claims = new[]
+            var claims = new List<Claim>
             {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(ClaimTypes.Role, user.Role)
             };
+
+            // Lấy permissions từ repository theo Role string
+            var rolePermissions = await _permissionRepository.GetPermissionsByRoleNameAsync(user.Role);
+            foreach (var perm in rolePermissions)
+            {
+                claims.Add(new Claim("permissions", perm));
+            }
 
             var token = new JwtSecurityToken(
                 issuer: _configuration["Jwt:Issuer"],

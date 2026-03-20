@@ -1,13 +1,7 @@
 ﻿using ERP.HRM.Application.Common;
 using ERP.HRM.Application.DTOs.Auth;
 using ERP.HRM.Application.Interfaces;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace ERP.HRM.API.Controllers
 {
@@ -42,6 +36,12 @@ namespace ERP.HRM.API.Controllers
             var result = await _authService.RefreshTokenAsync(dto.RefreshToken);
             return Ok(new ApiResponse<AuthResponseDto>(true, "Refresh token thành công", result));
         }
-    }
 
+        [HttpPost("logout")]
+        public async Task<IActionResult> Logout([FromBody] RefreshTokenRequest dto)
+        {
+            await _authService.LogoutAsync(dto.RefreshToken);
+            return Ok(new ApiResponse<string>(true, "Đăng xuất thành công", null));
+        }
+    }
 }

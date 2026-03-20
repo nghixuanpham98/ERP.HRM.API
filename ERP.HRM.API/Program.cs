@@ -29,6 +29,8 @@ builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IPositionRepository, PositionRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IUserRefreshTokenRepository, UserRefreshTokenRepository>();
+builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 
 // Services
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();

@@ -10,8 +10,11 @@ namespace ERP.HRM.Application.Interfaces
     public interface IAuthService
     {
         Task RegisterAsync(RegisterDto dto);
-        Task<AuthResponseDto> LoginAsync(LoginDto dto);
-        Task<AuthResponseDto> RefreshTokenAsync(string refreshToken);
-    }
 
+        Task<AuthResponseDto> LoginAsync(LoginDto dto);
+
+        Task<AuthResponseDto> RefreshTokenAsync(string refreshToken);
+
+        Task LogoutAsync(string refreshToken);
+    }
 }
