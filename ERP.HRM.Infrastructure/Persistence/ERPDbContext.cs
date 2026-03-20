@@ -28,8 +28,6 @@ public partial class ERPDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
 
     public virtual DbSet<UserRefreshToken> UserRefreshTokens { get; set; }
 
-    public virtual DbSet<Role> Roles { get; set; }
-
     public virtual DbSet<Permission> Permissions { get; set; }
 
     public virtual DbSet<RolePermission> RolePermissions { get; set; }
@@ -144,9 +142,6 @@ public partial class ERPDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
             entity.Property(e => e.CreatedDate).HasDefaultValueSql("(getdate())");
             entity.Property(e => e.PasswordHash).HasMaxLength(255);
             entity.Property(e => e.RefreshToken).HasMaxLength(255);
-            entity.Property(e => e.Role)
-                .HasMaxLength(50)
-                .HasDefaultValue("User");
             entity.Property(e => e.UserName).HasMaxLength(50);
         });
 
@@ -155,7 +150,7 @@ public partial class ERPDbContext : IdentityDbContext<User, IdentityRole<Guid>, 
 
         modelBuilder.Entity<RolePermission>()
             .HasOne(rp => rp.Role)
-            .WithMany(r => r.RolePermissions)
+            .WithMany()
             .HasForeignKey(rp => rp.RoleId);
 
         modelBuilder.Entity<RolePermission>()

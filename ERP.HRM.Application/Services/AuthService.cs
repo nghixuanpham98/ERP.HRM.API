@@ -42,7 +42,6 @@ namespace ERP.HRM.Application.Services
             {
                 UserName = dto.Username,
                 Email = dto.Email,
-                Role = "User",
                 CreatedDate = DateTime.UtcNow
             };
 
@@ -54,6 +53,9 @@ namespace ERP.HRM.Application.Services
                 ex.Data["Errors"] = errors;
                 throw ex;
             }
+
+            // Gán role mặc định
+            await _userManager.AddToRoleAsync(user, "User");
         }
 
         public async Task<AuthResponseDto> LoginAsync(LoginDto dto)
@@ -141,17 +143,23 @@ namespace ERP.HRM.Application.Services
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.UserName),
-                new Claim(ClaimTypes.Role, user.Role)
-            };
+    {
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim(ClaimTypes.Name, user.UserName)
+    };
 
-            // Lấy permissions từ repository theo Role string
-            var rolePermissions = await _permissionRepository.GetPermissionsByRoleNameAsync(user.Role);
-            foreach (var perm in rolePermissions)
+            // Lấy roles từ Identity
+            var roles = await _userManager.GetRolesAsync(user);
+            foreach (var role in roles)
             {
-                claims.Add(new Claim("permissions", perm));
+                claims.Add(new Claim(ClaimTypes.Role, role));
+
+                // Lấy permissions từ repository theo Role
+                var rolePermissions = await _permissionRepository.GetPermissionsByRoleNameAsync(role);
+                foreach (var perm in rolePermissions)
+                {
+                    claims.Add(new Claim("permissions", perm));
+                }
             }
 
             var token = new JwtSecurityToken(

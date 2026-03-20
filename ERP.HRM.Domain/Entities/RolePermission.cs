@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -10,12 +11,13 @@ namespace ERP.HRM.Domain.Entities
     public class RolePermission
     {
         public Guid RoleId { get; set; }
+
+        // FK tới AspNetRoles
+        public IdentityRole<Guid> Role { get; set; }
+
+        // FK tới Permissions
         public Guid PermissionId { get; set; }
 
-        // Navigation property tới Role
-        public Role Role { get; set; }
-
-        // Navigation property tới Permission
         public Permission Permission { get; set; }
     }
 
