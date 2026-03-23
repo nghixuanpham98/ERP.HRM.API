@@ -1,4 +1,5 @@
 using ERP.HRM.API;
+using ERP.HRM.Domain.Entities;
 using ERP.HRM.API.Middlewares;
 using ERP.HRM.Application.Interfaces;
 using ERP.HRM.Application.Mappings;

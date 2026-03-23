@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ERP.HRM.API;
-
-public partial class Department
+namespace ERP.HRM.Domain.Entities 
+{
+    public partial class Department
 {
     public int DepartmentId { get; set; }
 
@@ -28,4 +28,5 @@ public partial class Department
     public int? HeadOfDepartmentId { get; set; }
 
     public virtual ICollection<Employee> Employees { get; set; } = new List<Employee>();
+}
 }

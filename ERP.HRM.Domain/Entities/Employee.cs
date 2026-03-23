@@ -1,73 +1,74 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace ERP.HRM.API;
-
-public partial class Employee
+namespace ERP.HRM.Domain.Entities
 {
-    public int EmployeeId { get; set; }
+    public partial class Employee
+    {
+        public int EmployeeId { get; set; }
 
-    public string EmployeeCode { get; set; } = null!;
+        public string EmployeeCode { get; set; } = null!;
 
-    public string FullName { get; set; } = null!;
+        public string FullName { get; set; } = null!;
 
-    public DateOnly? DateOfBirth { get; set; }
+        public DateOnly? DateOfBirth { get; set; }
 
-    public string? Gender { get; set; }
+        public string? Gender { get; set; }
 
-    public int? DepartmentId { get; set; }
+        public int? DepartmentId { get; set; }
 
-    public int? PositionId { get; set; }
+        public int? PositionId { get; set; }
 
-    public decimal? BaseSalary { get; set; }
+        public decimal? BaseSalary { get; set; }
 
-    public DateOnly? HireDate { get; set; }
+        public DateOnly? HireDate { get; set; }
 
-    public string? Status { get; set; }
+        public string? Status { get; set; }
 
-    public DateTime? CreatedDate { get; set; }
+        public DateTime? CreatedDate { get; set; }
 
-    public string? CreatedBy { get; set; }
+        public string? CreatedBy { get; set; }
 
-    public DateTime? ModifiedDate { get; set; }
+        public DateTime? ModifiedDate { get; set; }
 
-    public string? ModifiedBy { get; set; }
+        public string? ModifiedBy { get; set; }
 
-    public string? NationalId { get; set; }
+        public string? NationalId { get; set; }
 
-    public string? Email { get; set; }
+        public string? Email { get; set; }
 
-    public string? PhoneNumber { get; set; }
+        public string? PhoneNumber { get; set; }
 
-    public string? Address { get; set; }
+        public string? Address { get; set; }
 
-    public int? ManagerId { get; set; }
+        public int? ManagerId { get; set; }
 
-    public string? JobTitle { get; set; }
+        public string? JobTitle { get; set; }
 
-    public decimal? Allowance { get; set; }
+        public decimal? Allowance { get; set; }
 
-    public string? ContractType { get; set; }
+        public string? ContractType { get; set; }
 
-    public DateOnly? ContractStartDate { get; set; }
+        public DateOnly? ContractStartDate { get; set; }
 
-    public DateOnly? ContractEndDate { get; set; }
+        public DateOnly? ContractEndDate { get; set; }
 
-    public DateOnly? ProbationEndDate { get; set; }
+        public DateOnly? ProbationEndDate { get; set; }
 
-    public bool? IsDeleted { get; set; }
+        public bool? IsDeleted { get; set; }
 
-    public DateTime? LastLoginDate { get; set; }
+        public DateTime? LastLoginDate { get; set; }
 
-    public string? FirstName { get; set; }
+        public string? FirstName { get; set; }
 
-    public string? LastName { get; set; }
+        public string? LastName { get; set; }
 
-    public virtual Department? Department { get; set; }
+        public virtual Department? Department { get; set; }
 
-    public virtual ICollection<Employee> InverseManager { get; set; } = new List<Employee>();
+        public virtual ICollection<Employee> InverseManager { get; set; } = new List<Employee>();
 
-    public virtual Employee? Manager { get; set; }
+        public virtual Employee? Manager { get; set; }
 
-    public virtual Position? Position { get; set; }
+        public virtual Position? Position { get; set; }
+    }
 }

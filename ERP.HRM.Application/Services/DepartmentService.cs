@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using ERP.HRM.API;
+using ERP.HRM.Domain.Entities;
 using ERP.HRM.Application.Common;
 using ERP.HRM.Application.DTOs.Department;
 using ERP.HRM.Application.Interfaces;

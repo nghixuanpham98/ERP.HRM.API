@@ -1,7 +1,6 @@
-﻿using ERP.HRM.API;
+﻿using ERP.HRM.Domain.Entities;
 using ERP.HRM.Application.DTOs.Auth;
 using ERP.HRM.Application.Interfaces;
-using ERP.HRM.Domain.Entities;
 using ERP.HRM.Domain.Exceptions;
 using ERP.HRM.Domain.Interfaces.Repositories;
 using Microsoft.AspNetCore.Identity;

@@ -1,4 +1,4 @@
-﻿using ERP.HRM.API;
+﻿using ERP.HRM.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
