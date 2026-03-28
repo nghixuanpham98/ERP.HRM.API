@@ -3,19 +3,33 @@ using ERP.HRM.API.Middlewares;
 using ERP.HRM.Application.Interfaces;
 using ERP.HRM.Application.Mappings;
 using ERP.HRM.Application.Services;
+using ERP.HRM.Application.Validators;
 using ERP.HRM.Domain.Entities;
 using ERP.HRM.Domain.Interfaces.Repositories;
 using ERP.HRM.Infrastructure;
 using ERP.HRM.Infrastructure.Repositories;
 using ERP.HRM.Infrastructure.Seed;
+using ERP.HRM.Infrastructure.UnitOfWork;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Text;
 
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Information()
+    .WriteTo.Console()
+    .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
+    .CreateLogger();
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Log
+builder.Host.UseSerilog();
 
 // DbContext
 builder.Services.AddDbContext<ERPDbContext>(options =>
@@ -26,7 +40,18 @@ builder.Services.AddIdentity<User, IdentityRole<Guid>>()
     .AddEntityFrameworkStores<ERPDbContext>()
     .AddDefaultTokenProviders();
 
-// Repositories
+// Validation
+builder.Services.AddFluentValidationAutoValidation();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateEmployeeValidator>();
+
+// MediatR - CQRS
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(ERP.HRM.Application.Features.Departments.Commands.CreateDepartmentCommand).Assembly));
+
+// Unit of Work
+builder.Services.AddScoped<IUnitOfWork>(provider => 
+    new ERP.HRM.Infrastructure.UnitOfWork.UnitOfWork(provider.GetRequiredService<ERPDbContext>()));
+
+// Repositories (kept for backward compatibility if needed)
 builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<IPositionRepository, PositionRepository>();
@@ -124,8 +149,10 @@ using (var scope = app.Services.CreateScope())
         .GetRequiredService<RoleManager<IdentityRole<Guid>>>();
     var userManager = scope.ServiceProvider
         .GetRequiredService<UserManager<User>>();
+    var logger = scope.ServiceProvider
+        .GetRequiredService<ILogger<Program>>();
 
-    await DatabaseSeeder.SeedRolesAndAdminAsync(roleManager, userManager);
+    await DatabaseSeeder.SeedRolesAndAdminAsync(roleManager, userManager, logger);
 }
 
 app.UseMiddleware<GlobalException>();

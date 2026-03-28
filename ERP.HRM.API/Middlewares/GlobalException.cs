@@ -1,16 +1,19 @@
 ﻿using ERP.HRM.Application.Common;
 using ERP.HRM.Domain.Exceptions;
 using System.Net;
+using Microsoft.Extensions.Logging;
 
 namespace ERP.HRM.API.Middlewares
 {
     public class GlobalException
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger<GlobalException> _logger;
 
-        public GlobalException(RequestDelegate next)
+        public GlobalException(RequestDelegate next, ILogger<GlobalException> logger)
         {
             _next = next;
+            _logger = logger;
         }
 
         public async Task InvokeAsync(HttpContext context)
@@ -21,11 +24,12 @@ namespace ERP.HRM.API.Middlewares
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Unhandled exception occurred: {ExceptionMessage}", ex.Message);
                 await HandleExceptionAsync(context, ex);
             }
         }
 
-        private static Task HandleExceptionAsync(HttpContext context, Exception ex)
+        private Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
             HttpStatusCode status;
             string errorType = ex.GetType().Name;
@@ -42,16 +46,20 @@ namespace ERP.HRM.API.Middlewares
             {
                 case NotFoundException:
                     status = HttpStatusCode.NotFound;
+                    _logger.LogWarning("NotFoundException: {Message}", message);
                     break;
                 case ValidationException:
                     status = HttpStatusCode.BadRequest;
+                    _logger.LogWarning("ValidationException: {Message}", message);
                     break;
                 case BusinessRuleException:
                     status = HttpStatusCode.Conflict;
+                    _logger.LogWarning("BusinessRuleException: {Message}", message);
                     break;
                 default:
                     status = HttpStatusCode.InternalServerError;
                     message = "Internal Server Error";
+                    _logger.LogError("Unexpected exception: {ExceptionType}: {Message}", errorType, ex.Message);
                     break;
             }
 

@@ -5,23 +5,27 @@ using ERP.HRM.Application.DTOs.Department;
 using ERP.HRM.Application.Interfaces;
 using ERP.HRM.Domain.Exceptions;
 using ERP.HRM.Domain.Interfaces.Repositories;
+using Microsoft.Extensions.Logging;
 
 namespace ERP.HRM.Application.Services
 {
     public class DepartmentService : IDepartmentService
     {
-        private readonly IDepartmentRepository _departmentRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ILogger<DepartmentService> _logger;
 
-        public DepartmentService(IDepartmentRepository departmentRepository, IMapper mapper)
+        public DepartmentService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<DepartmentService> logger)
         {
-            _departmentRepository = departmentRepository;
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<PagedResult<DepartmentDto>> GetAllDepartmentsAsync(int pageNumber, int pageSize)
         {
-            var (departments, totalCount) = await _departmentRepository.GetPagedAsync(pageNumber, pageSize);
+            _logger.LogInformation("Fetching all departments. Page: {PageNumber}, Size: {PageSize}", pageNumber, pageSize);
+            var (departments, totalCount) = await _unitOfWork.DepartmentRepository.GetPagedAsync(pageNumber, pageSize);
 
             return new PagedResult<DepartmentDto>
             {
@@ -34,47 +38,92 @@ namespace ERP.HRM.Application.Services
 
         public async Task<DepartmentDto> GetDepartmentByIdAsync(int id)
         {
-            var department = await _departmentRepository.GetByIdAsync(id);
+            _logger.LogInformation("Fetching department with Id {DepartmentId}", id);
+            var department = await _unitOfWork.DepartmentRepository.GetByIdAsync(id);
             if (department == null)
+            {
+                _logger.LogWarning("Department with Id {DepartmentId} not found", id);
                 throw new NotFoundException($"Department with Id {id} not found");
+            }
 
             return _mapper.Map<DepartmentDto>(department);
         }
 
         public async Task<DepartmentDto> AddDepartmentAsync(CreateDepartmentDto dto)
         {
-            if (await _departmentRepository.ExistsByNameAsync(dto.DepartmentName))
+            try
             {
-                var ex = new BusinessRuleException("Department name already exists");
-                ex.Data["Errors"] = new List<string> { $"Tên phòng ban '{dto.DepartmentName}' đã tồn tại" };
-                throw ex;
+                if (await _unitOfWork.DepartmentRepository.ExistsByNameAsync(dto.DepartmentName))
+                {
+                    _logger.LogWarning("Department name '{DepartmentName}' already exists", dto.DepartmentName);
+                    var ex = new BusinessRuleException("Department name already exists");
+                    ex.Data["Errors"] = new List<string> { $"Tên phòng ban '{dto.DepartmentName}' đã tồn tại" };
+                    throw ex;
+                }
+
+                var department = _mapper.Map<Department>(dto);
+                await _unitOfWork.DepartmentRepository.AddAsync(department);
+                await _unitOfWork.SaveChangesAsync();
+
+                _logger.LogInformation("Department '{DepartmentName}' created successfully", dto.DepartmentName);
+
+                return _mapper.Map<DepartmentDto>(department);
             }
-
-            var department = _mapper.Map<Department>(dto);
-            await _departmentRepository.AddAsync(department);
-
-            return _mapper.Map<DepartmentDto>(department);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating department");
+                throw;
+            }
         }
 
         public async Task<DepartmentDto> UpdateDepartmentAsync(UpdateDepartmentDto dto)
         {
-            var department = await _departmentRepository.GetByIdAsync(dto.DepartmentId);
-            if (department == null)
-                throw new NotFoundException($"Department with Id {dto.DepartmentId} not found");
+            try
+            {
+                _logger.LogInformation("Updating department with Id {DepartmentId}", dto.DepartmentId);
+                var department = await _unitOfWork.DepartmentRepository.GetByIdAsync(dto.DepartmentId);
+                if (department == null)
+                {
+                    _logger.LogWarning("Department with Id {DepartmentId} not found", dto.DepartmentId);
+                    throw new NotFoundException($"Department with Id {dto.DepartmentId} not found");
+                }
 
-            _mapper.Map(dto, department);
-            await _departmentRepository.UpdateAsync(department);
+                _mapper.Map(dto, department);
+                await _unitOfWork.DepartmentRepository.UpdateAsync(department);
+                await _unitOfWork.SaveChangesAsync();
 
-            return _mapper.Map<DepartmentDto>(department);
+                _logger.LogInformation("Department with Id {DepartmentId} updated successfully", dto.DepartmentId);
+
+                return _mapper.Map<DepartmentDto>(department);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating department");
+                throw;
+            }
         }
 
         public async Task DeleteDepartmentAsync(int id)
         {
-            var department = await _departmentRepository.GetByIdAsync(id);
-            if (department == null)
-                throw new NotFoundException($"Department with Id {id} not found");
+            try
+            {
+                _logger.LogInformation("Deleting department with Id {DepartmentId}", id);
+                var department = await _unitOfWork.DepartmentRepository.GetByIdAsync(id);
+                if (department == null)
+                {
+                    _logger.LogWarning("Department with Id {DepartmentId} not found", id);
+                    throw new NotFoundException($"Department with Id {id} not found");
+                }
 
-            await _departmentRepository.SoftDeleteAsync(id);
+                await _unitOfWork.DepartmentRepository.SoftDeleteAsync(id);
+                await _unitOfWork.SaveChangesAsync();
+                _logger.LogInformation("Department with Id {DepartmentId} deleted successfully", id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting department");
+                throw;
+            }
         }
     }
 }

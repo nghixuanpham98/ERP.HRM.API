@@ -5,23 +5,27 @@ using ERP.HRM.Application.DTOs.Position;
 using ERP.HRM.Application.Interfaces;
 using ERP.HRM.Domain.Exceptions;
 using ERP.HRM.Domain.Interfaces.Repositories;
+using Microsoft.Extensions.Logging;
 
 namespace ERP.HRM.Application.Services
 {
     public class PositionService : IPositionService
     {
-        private readonly IPositionRepository _positionRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ILogger<PositionService> _logger;
 
-        public PositionService(IPositionRepository positionRepository, IMapper mapper)
+        public PositionService(IUnitOfWork unitOfWork, IMapper mapper, ILogger<PositionService> logger)
         {
-            _positionRepository = positionRepository;
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _mapper = mapper;
+            _logger = logger;
         }
 
         public async Task<PagedResult<PositionDto>> GetAllPositionsAsync(int pageNumber, int pageSize)
         {
-            var (positions, totalCount) = await _positionRepository.GetPagedAsync(pageNumber, pageSize);
+            _logger.LogInformation("Fetching all positions. Page: {PageNumber}, Size: {PageSize}", pageNumber, pageSize);
+            var (positions, totalCount) = await _unitOfWork.PositionRepository.GetPagedAsync(pageNumber, pageSize);
 
             return new PagedResult<PositionDto>
             {
@@ -34,58 +38,84 @@ namespace ERP.HRM.Application.Services
 
         public async Task<PositionDto> GetPositionByIdAsync(int id)
         {
-            var position = await _positionRepository.GetByIdAsync(id);
+            _logger.LogInformation("Fetching position with Id {PositionId}", id);
+            var position = await _unitOfWork.PositionRepository.GetByIdAsync(id);
             if (position == null)
+            {
+                _logger.LogWarning("Position with Id {PositionId} not found", id);
                 throw new NotFoundException($"Position with Id {id} not found");
+            }
 
             return _mapper.Map<PositionDto>(position);
         }
 
         public async Task<PositionDto> AddPositionAsync(CreatePositionDto dto)
         {
-            var errors = new List<string>();
-
-            if (string.IsNullOrWhiteSpace(dto.PositionName))
-                errors.Add("PositionName is required");
-
-            if (string.IsNullOrWhiteSpace(dto.PositionCode))
-                errors.Add("PositionCode is required");
-
-            if (await _positionRepository.ExistsByCodeAsync(dto.PositionCode))
-                errors.Add($"Position code '{dto.PositionCode}' already exists");
-
-            if (errors.Any())
+            try
             {
-                var ex = new ValidationException("Position data is invalid");
-                ex.Data["Errors"] = errors;
-                throw ex;
+                var position = _mapper.Map<Position>(dto);
+                await _unitOfWork.PositionRepository.AddAsync(position);
+                await _unitOfWork.SaveChangesAsync();
+
+                _logger.LogInformation("Position '{PositionName}' created successfully", dto.PositionName);
+
+                return _mapper.Map<PositionDto>(position);
             }
-
-            var position = _mapper.Map<Position>(dto);
-            await _positionRepository.AddAsync(position);
-
-            return _mapper.Map<PositionDto>(position);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating position");
+                throw;
+            }
         }
 
         public async Task<PositionDto> UpdatePositionAsync(UpdatePositionDto dto)
         {
-            var position = await _positionRepository.GetByIdAsync(dto.PositionId);
-            if (position == null)
-                throw new NotFoundException($"Position with Id {dto.PositionId} not found");
+            try
+            {
+                _logger.LogInformation("Updating position with Id {PositionId}", dto.PositionId);
+                var position = await _unitOfWork.PositionRepository.GetByIdAsync(dto.PositionId);
+                if (position == null)
+                {
+                    _logger.LogWarning("Position with Id {PositionId} not found", dto.PositionId);
+                    throw new NotFoundException($"Position with Id {dto.PositionId} not found");
+                }
 
-            _mapper.Map(dto, position);
-            await _positionRepository.UpdateAsync(position);
+                _mapper.Map(dto, position);
+                await _unitOfWork.PositionRepository.UpdateAsync(position);
+                await _unitOfWork.SaveChangesAsync();
 
-            return _mapper.Map<PositionDto>(position);
+                _logger.LogInformation("Position with Id {PositionId} updated successfully", dto.PositionId);
+
+                return _mapper.Map<PositionDto>(position);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating position");
+                throw;
+            }
         }
 
         public async Task DeletePositionAsync(int id)
         {
-            var position = await _positionRepository.GetByIdAsync(id);
-            if (position == null)
-                throw new NotFoundException($"Position with Id {id} not found");
+            try
+            {
+                _logger.LogInformation("Deleting position with Id {PositionId}", id);
+                var position = await _unitOfWork.PositionRepository.GetByIdAsync(id);
+                if (position == null)
+                {
+                    _logger.LogWarning("Position with Id {PositionId} not found", id);
+                    throw new NotFoundException($"Position with Id {id} not found");
+                }
 
-            await _positionRepository.SoftDeleteAsync(id);
+                await _unitOfWork.PositionRepository.SoftDeleteAsync(id);
+                await _unitOfWork.SaveChangesAsync();
+                _logger.LogInformation("Position with Id {PositionId} deleted successfully", id);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error deleting position");
+                throw;
+            }
         }
     }
 }
