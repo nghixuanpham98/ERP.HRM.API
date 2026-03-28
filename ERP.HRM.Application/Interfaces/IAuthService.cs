@@ -16,5 +16,9 @@ namespace ERP.HRM.Application.Interfaces
         Task<AuthResponseDto> RefreshTokenAsync(string refreshToken);
 
         Task LogoutAsync(string refreshToken);
+
+        Task AssignRoleAsync(AssignRoleDto dto);
+
+        Task<object> GetCurrentUserAsync(string username);
     }
 }

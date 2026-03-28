@@ -1,6 +1,9 @@
 ﻿using ERP.HRM.Application.Common;
 using ERP.HRM.Application.DTOs.Auth;
 using ERP.HRM.Application.Interfaces;
+using ERP.HRM.Domain.Constants;
+using ERP.HRM.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ERP.HRM.API.Controllers
@@ -42,6 +45,24 @@ namespace ERP.HRM.API.Controllers
         {
             await _authService.LogoutAsync(dto.RefreshToken);
             return Ok(new ApiResponse<string>(true, "Đăng xuất thành công", null));
+        }
+
+        [HttpPost("assign-role")]
+        [Authorize(Roles = RoleConstants.Admin)]
+        public async Task<IActionResult> AssignRole([FromBody] AssignRoleDto dto)
+        {
+            await _authService.AssignRoleAsync(dto);
+            return Ok(new ApiResponse<string>(
+                true, $"Đã gán role '{dto.Role}' cho user '{dto.Username}'", null));
+        }
+
+        [HttpGet("me")]
+        [Authorize]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            var username = User.Identity?.Name;
+            var result = await _authService.GetCurrentUserAsync(username!);
+            return Ok(new ApiResponse<object>(true, "Thông tin user hiện tại", result));
         }
     }
 }

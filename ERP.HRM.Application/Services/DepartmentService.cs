@@ -74,7 +74,7 @@ namespace ERP.HRM.Application.Services
             if (department == null)
                 throw new NotFoundException($"Department with Id {id} not found");
 
-            await _departmentRepository.DeleteAsync(id);
+            await _departmentRepository.SoftDeleteAsync(id);
         }
     }
 }

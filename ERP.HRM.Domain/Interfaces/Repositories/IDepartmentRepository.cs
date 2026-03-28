@@ -14,7 +14,7 @@ namespace ERP.HRM.Domain.Interfaces.Repositories
         Task<Department?> GetByIdAsync(int id);
         Task AddAsync(Department department);
         Task UpdateAsync(Department department);
-        Task DeleteAsync(int id);
+        Task SoftDeleteAsync(int id);
         Task<bool> ExistsByNameAsync(string departmentName);
         Task<int> GetEmployeeCountAsync(int departmentId);
     }

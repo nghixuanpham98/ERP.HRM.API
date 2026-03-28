@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ERP.HRM.Domain.Entities
 {
-    public partial class Employee
+    public partial class Employee : BaseEntity
     {
         public int EmployeeId { get; set; }
 
@@ -24,14 +24,6 @@ namespace ERP.HRM.Domain.Entities
         public DateOnly? HireDate { get; set; }
 
         public string? Status { get; set; }
-
-        public DateTime? CreatedDate { get; set; }
-
-        public string? CreatedBy { get; set; }
-
-        public DateTime? ModifiedDate { get; set; }
-
-        public string? ModifiedBy { get; set; }
 
         public string? NationalId { get; set; }
 
@@ -54,8 +46,6 @@ namespace ERP.HRM.Domain.Entities
         public DateOnly? ContractEndDate { get; set; }
 
         public DateOnly? ProbationEndDate { get; set; }
-
-        public bool? IsDeleted { get; set; }
 
         public DateTime? LastLoginDate { get; set; }
 

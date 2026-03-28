@@ -1,12 +1,13 @@
 using ERP.HRM.API;
-using ERP.HRM.Domain.Entities;
 using ERP.HRM.API.Middlewares;
 using ERP.HRM.Application.Interfaces;
 using ERP.HRM.Application.Mappings;
 using ERP.HRM.Application.Services;
+using ERP.HRM.Domain.Entities;
 using ERP.HRM.Domain.Interfaces.Repositories;
 using ERP.HRM.Infrastructure;
 using ERP.HRM.Infrastructure.Repositories;
+using ERP.HRM.Infrastructure.Seed;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -116,13 +117,21 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+// Seeder
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider
+        .GetRequiredService<RoleManager<IdentityRole<Guid>>>();
+    var userManager = scope.ServiceProvider
+        .GetRequiredService<UserManager<User>>();
 
-app.UseAuthentication();
-app.UseAuthorization();
+    await DatabaseSeeder.SeedRolesAndAdminAsync(roleManager, userManager);
+}
 
 app.UseMiddleware<GlobalException>();
-
+app.UseHttpsRedirection();
+app.UseAuthentication();
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

@@ -20,10 +20,11 @@ namespace ERP.HRM.Infrastructure.Repositories
         }
 
         public async Task<IEnumerable<Department>> GetAllAsync()
-            => await _context.Departments.ToListAsync();
+            => await _context.Departments.Where(e => e.IsDeleted == false).ToListAsync();
 
         public async Task<Department?> GetByIdAsync(int id)
-            => await _context.Departments.FindAsync(id);
+            => await _context.Departments.Where(e => e.IsDeleted == false)
+            .FirstOrDefaultAsync(e => e.DepartmentId == id);
 
         public async Task AddAsync(Department department)
         {
@@ -37,24 +38,27 @@ namespace ERP.HRM.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        public async Task DeleteAsync(int id)
+        public async Task SoftDeleteAsync(int id)
         {
             var dept = await _context.Departments.FindAsync(id);
             if (dept != null)
             {
-                _context.Departments.Remove(dept);
+                dept.IsDeleted = true;
+                dept.ModifiedDate = DateTime.UtcNow;
                 await _context.SaveChangesAsync();
             }
         }
 
         public async Task<bool> ExistsByNameAsync(string departmentName)
         {
-            return await _context.Departments.AnyAsync(d => d.DepartmentName == departmentName);
+            return await _context.Departments
+                .AnyAsync(d => d.DepartmentName == departmentName && d.IsDeleted == false);
         }
 
         public async Task<int> GetEmployeeCountAsync(int departmentId)
         {
-            return await _context.Employees.CountAsync(e => e.DepartmentId == departmentId);
+            return await _context.Employees
+                .CountAsync(e => e.DepartmentId == departmentId && e.IsDeleted == false);
         }
 
         public async Task<(IEnumerable<Department>, int)> GetPagedAsync(int pageNumber, int pageSize)
@@ -63,7 +67,9 @@ namespace ERP.HRM.Infrastructure.Repositories
                 .FromSqlRaw("EXEC sp_GetDepartmentsPaged @PageNumber={0}, @PageSize={1}", pageNumber, pageSize)
                 .ToListAsync();
 
-            var totalCount = await _context.Departments.CountAsync();
+            var totalCount = await _context.Departments
+                .Where(e => e.IsDeleted == false)
+                .CountAsync();
             return (departments, totalCount);
         }
     }

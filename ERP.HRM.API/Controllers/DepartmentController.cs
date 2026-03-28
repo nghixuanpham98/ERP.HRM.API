@@ -1,6 +1,7 @@
 using ERP.HRM.Application.Common;
 using ERP.HRM.Application.DTOs.Department;
 using ERP.HRM.Application.Interfaces;
+using ERP.HRM.Domain.Constants;
 using ERP.HRM.Domain.Interfaces.Repositories;
 using ERP.HRM.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
@@ -21,6 +22,7 @@ namespace ERP.HRM.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllDepartments(int pageNumber = 1, int pageSize = 10)
         {
             var departments = await _departmentService.GetAllDepartmentsAsync(pageNumber, pageSize);
@@ -28,6 +30,7 @@ namespace ERP.HRM.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetDepartmentById(int id)
         {
             var department = await _departmentService.GetDepartmentByIdAsync(id);
@@ -35,7 +38,7 @@ namespace ERP.HRM.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = $"{RoleConstants.Admin}")]
         public async Task<IActionResult> CreateDepartment([FromBody] CreateDepartmentDto dto)
         {
             var department = await _departmentService.AddDepartmentAsync(dto);
@@ -43,7 +46,7 @@ namespace ERP.HRM.API.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = $"{RoleConstants.Admin}")]
         public async Task<IActionResult> UpdateDepartment(int id, [FromBody] UpdateDepartmentDto dto)
         {
             if (id != dto.DepartmentId)
@@ -54,7 +57,7 @@ namespace ERP.HRM.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = $"{RoleConstants.Admin}")]
         public async Task<IActionResult> DeleteDepartment(int id)
         {
             await _departmentService.DeleteDepartmentAsync(id);

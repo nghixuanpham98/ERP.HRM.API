@@ -1,6 +1,7 @@
-﻿using ERP.HRM.Domain.Entities;
-using ERP.HRM.Application.DTOs.Auth;
+﻿using ERP.HRM.Application.DTOs.Auth;
 using ERP.HRM.Application.Interfaces;
+using ERP.HRM.Domain.Constants;
+using ERP.HRM.Domain.Entities;
 using ERP.HRM.Domain.Exceptions;
 using ERP.HRM.Domain.Interfaces.Repositories;
 using Microsoft.AspNetCore.Identity;
@@ -53,8 +54,7 @@ namespace ERP.HRM.Application.Services
                 throw ex;
             }
 
-            // Gán role mặc định
-            await _userManager.AddToRoleAsync(user, "User");
+            await _userManager.AddToRoleAsync(user, RoleConstants.Employee);
         }
 
         public async Task<AuthResponseDto> LoginAsync(LoginDto dto)
@@ -169,6 +169,37 @@ namespace ERP.HRM.Application.Services
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public async Task AssignRoleAsync(AssignRoleDto dto)
+        {
+            if (!RoleConstants.AllRoles.Contains(dto.Role))
+                throw new ValidationException($"Role '{dto.Role}' không hợp lệ. " +
+                    $"Chỉ chấp nhận: {string.Join(", ", RoleConstants.AllRoles)}");
+
+            var user = await _userManager.FindByNameAsync(dto.Username);
+            if (user == null)
+                throw new NotFoundException($"User '{dto.Username}' không tồn tại");
+
+            var currentRoles = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRolesAsync(user, currentRoles);
+            await _userManager.AddToRoleAsync(user, dto.Role);
+        }
+
+        public async Task<object> GetCurrentUserAsync(string username)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null)
+                throw new NotFoundException("User không tồn tại");
+
+            var roles = await _userManager.GetRolesAsync(user);
+
+            return new
+            {
+                user.UserName,
+                user.Email,
+                Roles = roles
+            };
         }
     }
 }

@@ -1,6 +1,7 @@
 using ERP.HRM.Application.Common;
 using ERP.HRM.Application.DTOs.Position;
 using ERP.HRM.Application.Interfaces;
+using ERP.HRM.Domain.Constants;
 using ERP.HRM.Domain.Interfaces.Repositories;
 using ERP.HRM.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
@@ -21,6 +22,7 @@ namespace ERP.HRM.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllPositions(int pageNumber = 1, int pageSize = 10)
         {
             var positions = await _positionService.GetAllPositionsAsync(pageNumber, pageSize);
@@ -28,6 +30,7 @@ namespace ERP.HRM.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetPositionById(int id)
         {
             var position = await _positionService.GetPositionByIdAsync(id);
@@ -35,7 +38,7 @@ namespace ERP.HRM.API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = $"{RoleConstants.Admin}")]
         public async Task<IActionResult> CreatePosition([FromBody] CreatePositionDto dto)
         {
             var position = await _positionService.AddPositionAsync(dto);
@@ -43,7 +46,7 @@ namespace ERP.HRM.API.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = $"{RoleConstants.Admin}")]
         public async Task<IActionResult> UpdatePosition(int id, [FromBody] UpdatePositionDto dto)
         {
             if (id != dto.PositionId)
@@ -54,7 +57,7 @@ namespace ERP.HRM.API.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = $"{RoleConstants.Admin}")]
         public async Task<IActionResult> DeletePosition(int id)
         {
             await _positionService.DeletePositionAsync(id);

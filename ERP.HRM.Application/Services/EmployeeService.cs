@@ -82,7 +82,7 @@ namespace ERP.HRM.Application.Services
             if (employee == null)
                 throw new NotFoundException($"Employee with Id {id} not found");
 
-            await _employeeRepository.DeleteAsync(id);
+            await _employeeRepository.SoftDeleteAsync(id);
         }
     }
 }

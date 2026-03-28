@@ -85,7 +85,7 @@ namespace ERP.HRM.Application.Services
             if (position == null)
                 throw new NotFoundException($"Position with Id {id} not found");
 
-            await _positionRepository.DeleteAsync(id);
+            await _positionRepository.SoftDeleteAsync(id);
         }
     }
 }

@@ -5,62 +5,67 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace ERP.HRM.Infrastructure.Repositories;
-
-public class PositionRepository : IPositionRepository
+namespace ERP.HRM.Infrastructure.Repositories
 {
-    private readonly ERPDbContext _context;
-
-    public PositionRepository(ERPDbContext context)
+    public class PositionRepository : IPositionRepository
     {
-        _context = context;
-    }
+        private readonly ERPDbContext _context;
 
-    public async Task<IEnumerable<Position>> GetAllAsync()
-        => await _context.Positions.ToListAsync();
-
-    public async Task<Position?> GetByIdAsync(int id)
-        => await _context.Positions.FindAsync(id);
-
-    public async Task AddAsync(Position position)
-    {
-        await _context.Positions.AddAsync(position);
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task UpdateAsync(Position position)
-    {
-        _context.Positions.Update(position);
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task DeleteAsync(int id)
-    {
-        var ent = await _context.Positions.FindAsync(id);
-        if (ent != null)
+        public PositionRepository(ERPDbContext context)
         {
-            _context.Positions.Remove(ent);
+            _context = context;
+        }
+
+        public async Task<IEnumerable<Position>> GetAllAsync()
+            => await _context.Positions.Where(e => e.IsDeleted == false).ToListAsync();
+
+        public async Task<Position?> GetByIdAsync(int id)
+             => await _context.Positions.Where(e => e.IsDeleted == false)
+            .FirstOrDefaultAsync(e => e.PositionId == id);
+
+        public async Task AddAsync(Position position)
+        {
+            await _context.Positions.AddAsync(position);
             await _context.SaveChangesAsync();
         }
-    }
 
-    public async Task<bool> ExistsByCodeAsync(string positionCode)
-    {
-        return await _context.Positions.AnyAsync(p => p.PositionCode == positionCode);
-    }
+        public async Task UpdateAsync(Position position)
+        {
+            _context.Positions.Update(position);
+            await _context.SaveChangesAsync();
+        }
 
-    public async Task<int> GetEmployeeCountAsync(int positionId)
-    {
-        return await _context.Employees.CountAsync(e => e.PositionId == positionId);
-    }
+        public async Task SoftDeleteAsync(int id)
+        {
+            var ent = await _context.Positions.FindAsync(id);
+            if (ent != null)
+            {
+                ent.IsDeleted = true;
+                ent.ModifiedDate = DateTime.UtcNow;
+                await _context.SaveChangesAsync();
+            }
+        }
 
-    public async Task<(IEnumerable<Position>, int)> GetPagedAsync(int pageNumber, int pageSize)
-    {
-        var positions = await _context.Positions
-            .FromSqlRaw("EXEC sp_GetPositionsPaged @PageNumber={0}, @PageSize={1}", pageNumber, pageSize)
-            .ToListAsync();
+        public async Task<bool> ExistsByCodeAsync(string positionCode)
+        {
+            return await _context.Positions.AnyAsync(p => p.PositionCode == positionCode && p.IsDeleted == false);
+        }
 
-        var totalCount = await _context.Positions.CountAsync();
-        return (positions, totalCount);
+        public async Task<int> GetEmployeeCountAsync(int positionId)
+        {
+            return await _context.Employees.CountAsync(e => e.PositionId == positionId && e.IsDeleted == false);
+        }
+
+        public async Task<(IEnumerable<Position>, int)> GetPagedAsync(int pageNumber, int pageSize)
+        {
+            var positions = await _context.Positions
+                .FromSqlRaw("EXEC sp_GetPositionsPaged @PageNumber={0}, @PageSize={1}", pageNumber, pageSize)
+                .ToListAsync();
+
+            var totalCount = await _context.Positions
+                .Where(e => e.IsDeleted == false)
+                .CountAsync();
+            return (positions, totalCount);
+        }
     }
 }

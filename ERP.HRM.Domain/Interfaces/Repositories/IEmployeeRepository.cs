@@ -14,7 +14,7 @@ namespace ERP.HRM.Domain.Interfaces.Repositories
         Task<Employee?> GetByIdAsync(int id);
         Task AddAsync(Employee employee);
         Task UpdateAsync(Employee employee);
-        Task DeleteAsync(int id);
+        Task SoftDeleteAsync(int id);
         Task<IEnumerable<Employee>> GetByDepartmentAsync(int departmentId);
         Task<IEnumerable<Employee>> GetByPositionAsync(int positionId);
     }

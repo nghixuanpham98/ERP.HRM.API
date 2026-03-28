@@ -1,6 +1,7 @@
 using ERP.HRM.Application.Common;
 using ERP.HRM.Application.DTOs.Employee;
 using ERP.HRM.Application.Interfaces;
+using ERP.HRM.Domain.Constants;
 using ERP.HRM.Domain.Interfaces.Repositories;
 using ERP.HRM.Infrastructure;
 using Microsoft.AspNetCore.Authorization;
@@ -21,6 +22,7 @@ namespace ERP.HRM.API.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllEmployees(int pageNumber = 1, int pageSize = 10)
         {
             var employees = await _employeeService.GetAllEmployeesAsync(pageNumber, pageSize);
@@ -28,6 +30,7 @@ namespace ERP.HRM.API.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<IActionResult> GetEmployeeById(int id)
         {
             var employee = await _employeeService.GetEmployeeByIdAsync(id);
@@ -35,6 +38,7 @@ namespace ERP.HRM.API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = $"{RoleConstants.Admin},{RoleConstants.HR}")]
         public async Task<IActionResult> CreateEmployee([FromBody] CreateEmployeeDto dto)
         {
             var employee = await _employeeService.AddEmployeeAsync(dto);
@@ -42,6 +46,7 @@ namespace ERP.HRM.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = $"{RoleConstants.Admin},{RoleConstants.HR}")]
         public async Task<IActionResult> UpdateEmployee(int id, [FromBody] UpdateEmployeeDto dto)
         {
             // đảm bảo id trong URL khớp với dto.EmployeeId
@@ -53,6 +58,7 @@ namespace ERP.HRM.API.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = $"{RoleConstants.Admin},{RoleConstants.HR}")]
         public async Task<IActionResult> DeleteEmployee(int id)
         {
             await _employeeService.DeleteEmployeeAsync(id);
