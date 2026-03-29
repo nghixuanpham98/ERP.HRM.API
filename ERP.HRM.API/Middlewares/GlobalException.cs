@@ -5,6 +5,9 @@ using Microsoft.Extensions.Logging;
 
 namespace ERP.HRM.API.Middlewares
 {
+    /// <summary>
+    /// Global exception handling middleware
+    /// </summary>
     public class GlobalException
     {
         private readonly RequestDelegate _next;
@@ -32,9 +35,9 @@ namespace ERP.HRM.API.Middlewares
         private Task HandleExceptionAsync(HttpContext context, Exception ex)
         {
             HttpStatusCode status;
-            string errorType = ex.GetType().Name;
+            string errorCode;
             string message = ex.Message;
-            string? detail = ex.InnerException?.Message ?? ex.StackTrace;
+            string? detail = null;
 
             IEnumerable<string>? errors = null;
             if (ex.Data.Contains("Errors"))
@@ -44,32 +47,81 @@ namespace ERP.HRM.API.Middlewares
 
             switch (ex)
             {
-                case NotFoundException:
+                case NotFoundException notFound:
                     status = HttpStatusCode.NotFound;
+                    errorCode = "NOT_FOUND";
                     _logger.LogWarning("NotFoundException: {Message}", message);
+                    detail = $"Resource not found: {notFound.ResourceName ?? "Unknown"}";
                     break;
-                case ValidationException:
+
+                case ValidationException validation:
                     status = HttpStatusCode.BadRequest;
+                    errorCode = "VALIDATION_ERROR";
                     _logger.LogWarning("ValidationException: {Message}", message);
+                    errors = validation.Errors.SelectMany(x => x.Value);
                     break;
-                case BusinessRuleException:
+
+                case BusinessRuleException businessRule:
+                    status = HttpStatusCode.BadRequest;
+                    errorCode = businessRule.Code ?? "BUSINESS_RULE_VIOLATION";
+                    _logger.LogWarning("BusinessRuleException ({Code}): {Message}", errorCode, message);
+                    break;
+
+                case AccessDeniedException:
+                    status = HttpStatusCode.Forbidden;
+                    errorCode = "ACCESS_DENIED";
+                    _logger.LogWarning("AccessDeniedException: {Message}", message);
+                    break;
+
+                case ConflictException:
                     status = HttpStatusCode.Conflict;
-                    _logger.LogWarning("BusinessRuleException: {Message}", message);
+                    errorCode = "CONFLICT";
+                    _logger.LogWarning("ConflictException: {Message}", message);
                     break;
+
+                case OperationTimeoutException:
+                    status = HttpStatusCode.RequestTimeout;
+                    errorCode = "OPERATION_TIMEOUT";
+                    _logger.LogWarning("OperationTimeoutException: {Message}", message);
+                    break;
+
+                case ExternalServiceException externalService:
+                    status = HttpStatusCode.ServiceUnavailable;
+                    errorCode = "EXTERNAL_SERVICE_ERROR";
+                    message = $"External service '{externalService.ServiceName}' is unavailable";
+                    _logger.LogError("ExternalServiceException: {Message}", ex.Message);
+                    break;
+
+                case ArgumentException:
+                    status = HttpStatusCode.BadRequest;
+                    errorCode = "INVALID_ARGUMENT";
+                    _logger.LogWarning("ArgumentException: {Message}", message);
+                    break;
+
+                case UnauthorizedAccessException:
+                    status = HttpStatusCode.Unauthorized;
+                    errorCode = "UNAUTHORIZED";
+                    _logger.LogWarning("UnauthorizedAccessException: {Message}", message);
+                    break;
+
                 default:
                     status = HttpStatusCode.InternalServerError;
-                    message = "Internal Server Error";
-                    _logger.LogError("Unexpected exception: {ExceptionType}: {Message}", errorType, ex.Message);
+                    errorCode = "INTERNAL_SERVER_ERROR";
+                    message = "An internal server error occurred";
+                    detail = ex.StackTrace;
+                    _logger.LogError(ex, "Unexpected exception: {ExceptionType}: {Message}", ex.GetType().Name, ex.Message);
                     break;
             }
 
             var response = new ErrorResponse
             {
                 Success = false,
-                ErrorType = errorType,
+                ErrorCode = errorCode,
+                ErrorType = ex.GetType().Name,
                 Message = message,
-                Errors = errors,
-                Detail = detail
+                Errors = errors?.ToList(),
+                Detail = detail,
+                Timestamp = DateTime.UtcNow
             };
 
             context.Response.ContentType = "application/json";
