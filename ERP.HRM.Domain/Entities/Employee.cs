@@ -60,5 +60,13 @@ namespace ERP.HRM.Domain.Entities
         public virtual Employee? Manager { get; set; }
 
         public virtual Position? Position { get; set; }
+
+        public virtual SalaryGrade? SalaryGrade { get; set; }
+
+        public virtual ICollection<EmploymentContract> EmploymentContracts { get; set; } = new List<EmploymentContract>();
+
+        public virtual ICollection<FamilyDependent> FamilyDependents { get; set; } = new List<FamilyDependent>();
+
+        public virtual ICollection<SalaryAdjustmentDecision> SalaryAdjustmentDecisions { get; set; } = new List<SalaryAdjustmentDecision>();
     }
 }

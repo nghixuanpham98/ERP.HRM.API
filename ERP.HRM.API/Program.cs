@@ -78,13 +78,31 @@ try
     builder.Services.AddScoped<IUserRefreshTokenRepository, UserRefreshTokenRepository>();
     builder.Services.AddScoped<IPermissionRepository, PermissionRepository>();
 
-    // Services
-    builder.Services.AddScoped<IDepartmentService, DepartmentService>();
-    builder.Services.AddScoped<IEmployeeService, EmployeeService>();
-    builder.Services.AddScoped<IPositionService, PositionService>();
-    builder.Services.AddScoped<IAuthService, AuthService>();
+     // Payroll Repositories
+     builder.Services.AddScoped<IPayrollPeriodRepository, PayrollPeriodRepository>();
+     builder.Services.AddScoped<IPayrollRecordRepository, PayrollRecordRepository>();
+     builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
+     builder.Services.AddScoped<IProductRepository, ProductRepository>();
+     builder.Services.AddScoped<IProductionOutputRepository, ProductionOutputRepository>();
+     builder.Services.AddScoped<ISalaryConfigurationRepository, SalaryConfigurationRepository>();
 
-    // AutoMapper
+    // HR Repositories
+     builder.Services.AddScoped<IEmploymentContractRepository, EmploymentContractRepository>();
+     builder.Services.AddScoped<ISalaryGradeRepository, SalaryGradeRepository>();
+     builder.Services.AddScoped<IFamilyDependentRepository, FamilyDependentRepository>();
+     builder.Services.AddScoped<ISalaryAdjustmentDecisionRepository, SalaryAdjustmentDecisionRepository>();
+     builder.Services.AddScoped<ITaxBracketRepository, TaxBracketRepository>();
+     builder.Services.AddScoped<IInsuranceTierRepository, InsuranceTierRepository>();
+
+     // Services
+     builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+     builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+     builder.Services.AddScoped<IPositionService, PositionService>();
+     builder.Services.AddScoped<IAuthService, AuthService>();
+     builder.Services.AddScoped<IPayrollService, PayrollService>();
+     builder.Services.AddScoped<IEnhancedPayrollService, EnhancedPayrollService>();
+
+     // AutoMapper
     builder.Services.AddAutoMapper(typeof(MappingProfile));
 
     // Caching

@@ -32,6 +32,32 @@ namespace ERP.HRM.API
 
         public virtual DbSet<RolePermission> RolePermissions { get; set; }
 
+        public virtual DbSet<SalaryConfiguration> SalaryConfigurations { get; set; }
+
+        public virtual DbSet<PayrollPeriod> PayrollPeriods { get; set; }
+
+        public virtual DbSet<Attendance> Attendances { get; set; }
+
+        public virtual DbSet<Product> Products { get; set; }
+
+        public virtual DbSet<ProductionOutput> ProductionOutputs { get; set; }
+
+        public virtual DbSet<PayrollRecord> PayrollRecords { get; set; }
+
+        public virtual DbSet<PayrollDeduction> PayrollDeductions { get; set; }
+
+        public virtual DbSet<EmploymentContract> EmploymentContracts { get; set; }
+
+        public virtual DbSet<SalaryGrade> SalaryGrades { get; set; }
+
+        public virtual DbSet<FamilyDependent> FamilyDependents { get; set; }
+
+        public virtual DbSet<SalaryAdjustmentDecision> SalaryAdjustmentDecisions { get; set; }
+
+        public virtual DbSet<TaxBracket> TaxBrackets { get; set; }
+
+        public virtual DbSet<InsuranceTier> InsuranceTiers { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
             => optionsBuilder.UseSqlServer("Name=DefaultConnection");
@@ -159,6 +185,332 @@ namespace ERP.HRM.API
                 .HasOne(rp => rp.Permission)
                 .WithMany()
                 .HasForeignKey(rp => rp.PermissionId);
+
+            // Configure Payroll Entities
+            modelBuilder.Entity<PayrollPeriod>(entity =>
+            {
+                entity.HasKey(e => e.PayrollPeriodId);
+
+                entity.Property(e => e.PeriodName)
+                    .HasMaxLength(100)
+                    .IsRequired();
+
+                entity.Property(e => e.StartDate)
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.EndDate)
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.FinalizedDate)
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.CreatedDate)
+                    .HasDefaultValueSql("(getdate())")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedDate)
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.IsDeleted)
+                    .HasDefaultValue(false);
+            });
+
+            modelBuilder.Entity<Attendance>(entity =>
+            {
+                entity.HasKey(e => e.AttendanceId);
+
+                entity.Property(e => e.AttendanceDate)
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.WorkingDays)
+                    .HasColumnType("decimal(5, 2)");
+
+                entity.Property(e => e.OvertimeHours)
+                    .HasColumnType("decimal(5, 2)");
+
+                entity.Property(e => e.OvertimeMultiplier)
+                    .HasColumnType("decimal(3, 2)")
+                    .HasDefaultValue(1.5m);
+
+                entity.Property(e => e.Note)
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.CreatedDate)
+                    .HasDefaultValueSql("(getdate())")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedDate)
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.IsDeleted)
+                    .HasDefaultValue(false);
+
+                entity.HasOne(d => d.Employee)
+                    .WithMany()
+                    .HasForeignKey(d => d.EmployeeId)
+                    .HasConstraintName("FK_Attendances_Employees");
+
+                entity.HasOne(d => d.PayrollPeriod)
+                    .WithMany()
+                    .HasForeignKey(d => d.PayrollPeriodId)
+                    .HasConstraintName("FK_Attendances_PayrollPeriods");
+
+                entity.HasIndex(e => new { e.EmployeeId, e.PayrollPeriodId, e.AttendanceDate })
+                    .IsUnique()
+                    .HasDatabaseName("UQ_Attendance_EmployeePeriodDate");
+            });
+
+            modelBuilder.Entity<SalaryConfiguration>(entity =>
+            {
+                entity.HasKey(e => e.SalaryConfigurationId);
+
+                entity.Property(e => e.SalaryType)
+                    .HasConversion<string>()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.BaseSalary)
+                    .HasColumnType("decimal(18, 2)")
+                    .HasDefaultValue(0m);
+
+                entity.Property(e => e.UnitPrice)
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.HourlyRate)
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.Allowance)
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.InsuranceRate)
+                    .HasColumnType("decimal(5, 2)")
+                    .HasDefaultValue(8m);
+
+                entity.Property(e => e.TaxRate)
+                    .HasColumnType("decimal(5, 2)")
+                    .HasDefaultValue(5m);
+
+                entity.Property(e => e.EffectiveFrom)
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.EffectiveTo)
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.IsActive)
+                    .HasDefaultValue(true);
+
+                entity.Property(e => e.CreatedDate)
+                    .HasDefaultValueSql("(getdate())")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedDate)
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.IsDeleted)
+                    .HasDefaultValue(false);
+
+                entity.HasOne(d => d.Employee)
+                    .WithMany()
+                    .HasForeignKey(d => d.EmployeeId)
+                    .HasConstraintName("FK_SalaryConfigurations_Employees");
+            });
+
+            modelBuilder.Entity<PayrollRecord>(entity =>
+            {
+                entity.HasKey(e => e.PayrollRecordId);
+
+                entity.Property(e => e.SalaryType)
+                    .HasConversion<string>()
+                    .HasMaxLength(50);
+
+                entity.Property(e => e.BaseSalary)
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.Allowance)
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.OvertimeCompensation)
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.GrossSalary)
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.InsuranceDeduction)
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.TaxDeduction)
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.OtherDeductions)
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.TotalDeductions)
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.NetSalary)
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.WorkingDays)
+                    .HasColumnType("decimal(5, 2)");
+
+                entity.Property(e => e.ProductionTotal)
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.Status)
+                    .HasMaxLength(50)
+                    .HasDefaultValue("Draft");
+
+                entity.Property(e => e.PaymentDate)
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.Notes)
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.CreatedDate)
+                    .HasDefaultValueSql("(getdate())")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedDate)
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.IsDeleted)
+                    .HasDefaultValue(false);
+
+                entity.HasOne(d => d.Employee)
+                    .WithMany()
+                    .HasForeignKey(d => d.EmployeeId)
+                    .HasConstraintName("FK_PayrollRecords_Employees");
+
+                entity.HasOne(d => d.PayrollPeriod)
+                    .WithMany()
+                    .HasForeignKey(d => d.PayrollPeriodId)
+                    .HasConstraintName("FK_PayrollRecords_PayrollPeriods");
+
+                entity.HasIndex(e => new { e.EmployeeId, e.PayrollPeriodId })
+                    .IsUnique()
+                    .HasDatabaseName("UQ_PayrollRecord_EmployeePeriod");
+            });
+
+            modelBuilder.Entity<PayrollDeduction>(entity =>
+            {
+                entity.HasKey(e => e.PayrollDeductionId);
+
+                entity.Property(e => e.DeductionType)
+                    .HasMaxLength(50)
+                    .IsRequired();
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.Amount)
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.Reason)
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.CreatedDate)
+                    .HasDefaultValueSql("(getdate())")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedDate)
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.IsDeleted)
+                    .HasDefaultValue(false);
+
+                entity.HasOne(d => d.PayrollRecord)
+                    .WithMany(p => p.Deductions)
+                    .HasForeignKey(d => d.PayrollRecordId)
+                    .HasConstraintName("FK_PayrollDeductions_PayrollRecords");
+            });
+
+            modelBuilder.Entity<Product>(entity =>
+            {
+                entity.HasKey(e => e.ProductId);
+
+                entity.Property(e => e.ProductCode)
+                    .HasMaxLength(50)
+                    .IsRequired();
+
+                entity.Property(e => e.ProductName)
+                    .HasMaxLength(100)
+                    .IsRequired();
+
+                entity.Property(e => e.Description)
+                    .HasMaxLength(255);
+
+                entity.Property(e => e.Unit)
+                    .HasMaxLength(20)
+                    .HasDefaultValue("cái");
+
+                entity.Property(e => e.Category)
+                    .HasMaxLength(100);
+
+                entity.Property(e => e.Status)
+                    .HasMaxLength(50)
+                    .HasDefaultValue("Active");
+
+                entity.Property(e => e.CreatedDate)
+                    .HasDefaultValueSql("(getdate())")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedDate)
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.IsDeleted)
+                    .HasDefaultValue(false);
+            });
+
+            modelBuilder.Entity<ProductionOutput>(entity =>
+            {
+                entity.HasKey(e => e.ProductionOutputId);
+
+                entity.Property(e => e.Quantity)
+                    .HasColumnType("decimal(10, 2)");
+
+                entity.Property(e => e.UnitPrice)
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.Amount)
+                    .HasColumnType("decimal(18, 2)");
+
+                entity.Property(e => e.ProductionDate)
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.QualityStatus)
+                    .HasMaxLength(50)
+                    .HasDefaultValue("OK");
+
+                entity.Property(e => e.Notes)
+                    .HasMaxLength(500);
+
+                entity.Property(e => e.CreatedDate)
+                    .HasDefaultValueSql("(getdate())")
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.ModifiedDate)
+                    .HasColumnType("datetime");
+
+                entity.Property(e => e.IsDeleted)
+                    .HasDefaultValue(false);
+
+                entity.HasOne(d => d.Employee)
+                    .WithMany()
+                    .HasForeignKey(d => d.EmployeeId)
+                    .HasConstraintName("FK_ProductionOutputs_Employees");
+
+                entity.HasOne(d => d.Product)
+                    .WithMany()
+                    .HasForeignKey(d => d.ProductId)
+                    .HasConstraintName("FK_ProductionOutputs_Products");
+
+                entity.HasOne(d => d.PayrollPeriod)
+                    .WithMany()
+                    .HasForeignKey(d => d.PayrollPeriodId)
+                    .HasConstraintName("FK_ProductionOutputs_PayrollPeriods");
+
+                entity.HasIndex(e => new { e.EmployeeId, e.PayrollPeriodId })
+                    .HasDatabaseName("IDX_ProductionOutput_EmployeePeriod");
+            });
 
             OnModelCreatingPartial(modelBuilder);
 

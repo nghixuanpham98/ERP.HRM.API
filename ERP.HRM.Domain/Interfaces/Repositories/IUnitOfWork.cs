@@ -17,6 +17,12 @@ namespace ERP.HRM.Domain.Interfaces.Repositories
         IUserRepository UserRepository { get; }
         IUserRefreshTokenRepository UserRefreshTokenRepository { get; }
         IPermissionRepository PermissionRepository { get; }
+        ISalaryConfigurationRepository SalaryConfigurationRepository { get; }
+        IPayrollPeriodRepository PayrollPeriodRepository { get; }
+        IAttendanceRepository AttendanceRepository { get; }
+        IProductionOutputRepository ProductionOutputRepository { get; }
+        IPayrollRecordRepository PayrollRecordRepository { get; }
+        IProductRepository ProductRepository { get; }
 
         /// <summary>
         /// Saves all changes made in this context to the database

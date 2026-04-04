@@ -25,6 +25,12 @@ namespace ERP.HRM.Infrastructure.UnitOfWork
         private IUserRepository _userRepository;
         private IUserRefreshTokenRepository _userRefreshTokenRepository;
         private IPermissionRepository _permissionRepository;
+        private ISalaryConfigurationRepository _salaryConfigurationRepository;
+        private IPayrollPeriodRepository _payrollPeriodRepository;
+        private IAttendanceRepository _attendanceRepository;
+        private IProductionOutputRepository _productionOutputRepository;
+        private IPayrollRecordRepository _payrollRecordRepository;
+        private IProductRepository _productRepository;
 
         public UnitOfWork(ERPDbContext context)
         {
@@ -48,6 +54,24 @@ namespace ERP.HRM.Infrastructure.UnitOfWork
 
         public IPermissionRepository PermissionRepository
             => _permissionRepository ??= new PermissionRepository(_context);
+
+        public ISalaryConfigurationRepository SalaryConfigurationRepository
+            => _salaryConfigurationRepository ??= new SalaryConfigurationRepository(_context);
+
+        public IPayrollPeriodRepository PayrollPeriodRepository
+            => _payrollPeriodRepository ??= new PayrollPeriodRepository(_context);
+
+        public IAttendanceRepository AttendanceRepository
+            => _attendanceRepository ??= new AttendanceRepository(_context);
+
+        public IProductionOutputRepository ProductionOutputRepository
+            => _productionOutputRepository ??= new ProductionOutputRepository(_context);
+
+        public IPayrollRecordRepository PayrollRecordRepository
+            => _payrollRecordRepository ??= new PayrollRecordRepository(_context);
+
+        public IProductRepository ProductRepository
+            => _productRepository ??= new ProductRepository(_context);
 
         /// <summary>
         /// Saves all changes made in the DbContext to the database
