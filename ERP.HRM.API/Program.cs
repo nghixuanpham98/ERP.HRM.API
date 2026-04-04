@@ -94,6 +94,13 @@ try
      builder.Services.AddScoped<ITaxBracketRepository, TaxBracketRepository>();
      builder.Services.AddScoped<IInsuranceTierRepository, InsuranceTierRepository>();
 
+     // Phase 2 HR Management Repositories
+     builder.Services.AddScoped<IEmployeeRecordRepository, EmployeeRecordRepository>();
+     builder.Services.AddScoped<IInsuranceParticipationRepository, InsuranceParticipationRepository>();
+     builder.Services.AddScoped<IPersonnelTransferRepository, PersonnelTransferRepository>();
+     builder.Services.AddScoped<IResignationDecisionRepository, ResignationDecisionRepository>();
+     builder.Services.AddScoped<ILeaveRequestRepository, LeaveRequestRepository>();
+
      // Services
      builder.Services.AddScoped<IDepartmentService, DepartmentService>();
      builder.Services.AddScoped<IEmployeeService, EmployeeService>();

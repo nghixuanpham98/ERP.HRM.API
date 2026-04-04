@@ -23,6 +23,11 @@ namespace ERP.HRM.Domain.Interfaces.Repositories
         IProductionOutputRepository ProductionOutputRepository { get; }
         IPayrollRecordRepository PayrollRecordRepository { get; }
         IProductRepository ProductRepository { get; }
+        IProductionStageRepository ProductionStageRepository { get; }
+        IProductionJobRepository ProductionJobRepository { get; }
+        IJobProductPricingRepository JobProductPricingRepository { get; }
+        IProductionOutputV2Repository ProductionOutputV2Repository { get; }
+        ISalaryComponentRepository SalaryComponentRepository { get; }
 
         /// <summary>
         /// Saves all changes made in this context to the database

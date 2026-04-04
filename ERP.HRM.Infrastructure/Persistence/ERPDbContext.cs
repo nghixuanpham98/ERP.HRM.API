@@ -58,6 +58,26 @@ namespace ERP.HRM.API
 
         public virtual DbSet<InsuranceTier> InsuranceTiers { get; set; }
 
+        public virtual DbSet<EmployeeRecord> EmployeeRecords { get; set; }
+
+        public virtual DbSet<InsuranceParticipation> InsuranceParticipations { get; set; }
+
+        public virtual DbSet<PersonnelTransfer> PersonnelTransfers { get; set; }
+
+        public virtual DbSet<ResignationDecision> ResignationDecisions { get; set; }
+
+        public virtual DbSet<LeaveRequest> LeaveRequests { get; set; }
+
+        public virtual DbSet<ProductionStage> ProductionStages { get; set; }
+
+        public virtual DbSet<ProductionJob> ProductionJobs { get; set; }
+
+        public virtual DbSet<JobProductPricing> JobProductPricings { get; set; }
+
+        public virtual DbSet<ProductionOutputV2> ProductionOutputV2 { get; set; }
+
+        public virtual DbSet<SalaryComponent> SalaryComponents { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
             => optionsBuilder.UseSqlServer("Name=DefaultConnection");

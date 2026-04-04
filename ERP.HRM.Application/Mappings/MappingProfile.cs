@@ -65,6 +65,27 @@ namespace ERP.HRM.Application.Mappings
             CreateMap<InsuranceTier, InsuranceTierDto>().ReverseMap();
             CreateMap<InsuranceTier, CreateInsuranceTierDto>().ReverseMap();
             CreateMap<InsuranceTier, UpdateInsuranceTierDto>().ReverseMap();
+
+            // Phase 2 HR Management mappings
+            CreateMap<EmployeeRecord, EmployeeRecordDto>().ReverseMap();
+            CreateMap<EmployeeRecord, CreateEmployeeRecordDto>().ReverseMap();
+            CreateMap<EmployeeRecord, UpdateEmployeeRecordDto>().ReverseMap();
+
+            CreateMap<InsuranceParticipation, InsuranceParticipationDto>().ReverseMap();
+            CreateMap<InsuranceParticipation, CreateInsuranceParticipationDto>().ReverseMap();
+            CreateMap<InsuranceParticipation, UpdateInsuranceParticipationDto>().ReverseMap();
+
+            CreateMap<PersonnelTransfer, PersonnelTransferDto>().ReverseMap();
+            CreateMap<PersonnelTransfer, CreatePersonnelTransferDto>().ReverseMap();
+            CreateMap<PersonnelTransfer, UpdatePersonnelTransferDto>().ReverseMap();
+
+            CreateMap<ResignationDecision, ResignationDecisionDto>().ReverseMap();
+            CreateMap<ResignationDecision, CreateResignationDecisionDto>().ReverseMap();
+            CreateMap<ResignationDecision, UpdateResignationDecisionDto>().ReverseMap();
+
+            CreateMap<LeaveRequest, LeaveRequestDto>().ReverseMap();
+            CreateMap<LeaveRequest, CreateLeaveRequestDto>().ReverseMap();
+            CreateMap<LeaveRequest, UpdateLeaveRequestDto>().ReverseMap();
         }
     }
 }

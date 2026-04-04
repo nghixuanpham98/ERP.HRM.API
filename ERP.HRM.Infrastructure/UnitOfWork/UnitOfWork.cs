@@ -31,6 +31,11 @@ namespace ERP.HRM.Infrastructure.UnitOfWork
         private IProductionOutputRepository _productionOutputRepository;
         private IPayrollRecordRepository _payrollRecordRepository;
         private IProductRepository _productRepository;
+        private IProductionStageRepository _productionStageRepository;
+        private IProductionJobRepository _productionJobRepository;
+        private IJobProductPricingRepository _jobProductPricingRepository;
+        private IProductionOutputV2Repository _productionOutputV2Repository;
+        private ISalaryComponentRepository _salaryComponentRepository;
 
         public UnitOfWork(ERPDbContext context)
         {
@@ -72,6 +77,21 @@ namespace ERP.HRM.Infrastructure.UnitOfWork
 
         public IProductRepository ProductRepository
             => _productRepository ??= new ProductRepository(_context);
+
+        public IProductionStageRepository ProductionStageRepository
+            => _productionStageRepository ??= new ProductionStageRepository(_context);
+
+        public IProductionJobRepository ProductionJobRepository
+            => _productionJobRepository ??= new ProductionJobRepository(_context);
+
+        public IJobProductPricingRepository JobProductPricingRepository
+            => _jobProductPricingRepository ??= new JobProductPricingRepository(_context);
+
+        public IProductionOutputV2Repository ProductionOutputV2Repository
+            => _productionOutputV2Repository ??= new ProductionOutputV2Repository(_context);
+
+        public ISalaryComponentRepository SalaryComponentRepository
+            => _salaryComponentRepository ??= new SalaryComponentRepository(_context);
 
         /// <summary>
         /// Saves all changes made in the DbContext to the database
