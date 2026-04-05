@@ -100,6 +100,7 @@ try
      builder.Services.AddScoped<IPersonnelTransferRepository, PersonnelTransferRepository>();
      builder.Services.AddScoped<IResignationDecisionRepository, ResignationDecisionRepository>();
      builder.Services.AddScoped<ILeaveRequestRepository, LeaveRequestRepository>();
+     builder.Services.AddScoped<ILeaveBalanceRepository, LeaveBalanceRepository>();
 
      // Services
      builder.Services.AddScoped<IDepartmentService, DepartmentService>();
@@ -108,6 +109,13 @@ try
      builder.Services.AddScoped<IAuthService, AuthService>();
      builder.Services.AddScoped<IPayrollService, PayrollService>();
      builder.Services.AddScoped<IEnhancedPayrollService, EnhancedPayrollService>();
+     builder.Services.AddScoped<IPayrollExportService, PayrollExportService>();
+     builder.Services.AddScoped<ILeaveManagementService, LeaveManagementService>();
+     builder.Services.AddScoped<IInsuranceManagementService, InsuranceManagementService>();
+     builder.Services.AddScoped<IVietnameseTaxService, VietnameseTaxService>();
+     builder.Services.AddScoped<IReportingService, ReportingService>();
+     builder.Services.AddScoped<IDashboardService, DashboardService>();
+     builder.Services.AddScoped<IMetricsService, MetricsService>();
 
      // AutoMapper
     builder.Services.AddAutoMapper(typeof(MappingProfile));

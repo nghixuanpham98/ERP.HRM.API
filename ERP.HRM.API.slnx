@@ -3,4 +3,5 @@
   <Project Path="ERP.HRM.Application/ERP.HRM.Application.csproj" />
   <Project Path="ERP.HRM.Domain/ERP.HRM.Domain.csproj" />
   <Project Path="ERP.HRM.Infrastructure/ERP.HRM.Infrastructure.csproj" />
+  <Project Path="tests/ERP.HRM.Application.Tests/ERP.HRM.Application.Tests.csproj" />
 </Solution>

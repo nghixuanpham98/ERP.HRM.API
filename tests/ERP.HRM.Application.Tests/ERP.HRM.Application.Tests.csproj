@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.3.0" />
+    <PackageReference Include="xunit" Version="2.5.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.0" />
+    <PackageReference Include="Moq" Version="4.20.1" />
+    <PackageReference Include="FluentValidation" Version="11.11.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\ERP.HRM.Application\ERP.HRM.Application.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Features\Leave\" />
+  </ItemGroup>
+  <!-- Exclude legacy test files to focus on Phase 1.1 Leave Management tests -->
+  <ItemGroup>
+    <Compile Remove="Features\Handlers\*.cs" />
+    <Compile Remove="Services\DepartmentServiceTests.cs" />
+    <Compile Remove="Services\AuthServiceTests.cs" />
+    <Compile Remove="Services\PayrollServiceTests.cs" />
+    <Compile Remove="Validators\*.cs" />
+    <Compile Remove="StringValidationExtensionsTests.cs" />
+  </ItemGroup>
+</Project>

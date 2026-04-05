@@ -1,0 +1,217 @@
+{
+  "info": {
+    "_postman_id": "payroll-export-api",
+    "name": "Payroll Export API",
+    "description": "REST API for exporting payroll data (Excel/PDF) for banks and tax authorities",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Export Endpoints",
+      "item": [
+        {
+          "name": "Export Payroll (General)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"payrollPeriodId\": 1,\n  \"exportFormat\": \"Excel\",\n  \"exportPurpose\": \"General\",\n  \"departmentId\": null,\n  \"includeEmployeeDetails\": true,\n  \"includeSalaryBreakdown\": true,\n  \"includeDeductionsBreakdown\": true\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/payrollexport/export",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payrollexport", "export"]
+            }
+          }
+        },
+        {
+          "name": "Export Bank Transfer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payrollexport/export-bank-transfer?payrollPeriodId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payrollexport", "export-bank-transfer"],
+              "query": [
+                {
+                  "key": "payrollPeriodId",
+                  "value": "1"
+                },
+                {
+                  "key": "departmentId",
+                  "value": "1",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Export Tax Authority",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payrollexport/export-tax-authority?payrollPeriodId=1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payrollexport", "export-tax-authority"],
+              "query": [
+                {
+                  "key": "payrollPeriodId",
+                  "value": "1"
+                },
+                {
+                  "key": "departmentId",
+                  "value": "1",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Query Endpoints",
+      "item": [
+        {
+          "name": "Get Payroll Export Lines",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payrollexport/lines/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payrollexport", "lines", "1"],
+              "query": [
+                {
+                  "key": "departmentId",
+                  "value": "1",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Bank Transfer Lines",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payrollexport/bank-lines/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payrollexport", "bank-lines", "1"],
+              "query": [
+                {
+                  "key": "departmentId",
+                  "value": "1",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Tax Authority Lines",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payrollexport/tax-lines/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payrollexport", "tax-lines", "1"],
+              "query": [
+                {
+                  "key": "departmentId",
+                  "value": "1",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Get Export Summary",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/payrollexport/summary/1",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "payrollexport", "summary", "1"],
+              "query": [
+                {
+                  "key": "departmentId",
+                  "value": "1",
+                  "disabled": true
+                }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://localhost:7190",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "your-jwt-token-here",
+      "type": "string"
+    }
+  ]
+}

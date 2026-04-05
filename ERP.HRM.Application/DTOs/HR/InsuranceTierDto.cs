@@ -38,4 +38,17 @@ namespace ERP.HRM.Application.DTOs.HR
         public DateTime? EndDate { get; set; }
         public bool IsActive { get; set; }
     }
+
+    public class InsuranceCalculationResultDto
+    {
+        public int EmployeeId { get; set; }
+        public string InsuranceType { get; set; } = null!;
+        public decimal BaseSalary { get; set; }
+        public decimal EmployeeContributionRate { get; set; }
+        public decimal EmployerContributionRate { get; set; }
+        public decimal EmployeeContributionAmount { get; set; }
+        public decimal EmployerContributionAmount { get; set; }
+        public decimal TotalContributionAmount { get; set; }
+        public DateTime CalculatedAt { get; set; }
+    }
 }
