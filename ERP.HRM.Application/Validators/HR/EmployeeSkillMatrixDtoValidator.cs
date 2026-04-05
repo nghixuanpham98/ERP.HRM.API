@@ -16,7 +16,7 @@ namespace ERP.HRM.Application.Validators.HR
 
             RuleFor(x => x.SkillCategory)
                 .NotEmpty().WithMessage("Skill category is required")
-                .Must(x => new[] { "Technical", "Language", "Soft Skills" }.Contains(x))
+                .Must(x => new[] { "Technical", "Language", "Soft Skills" }.Contains(x!))
                 .WithMessage("Invalid skill category");
 
             RuleFor(x => x.Level)
@@ -26,10 +26,10 @@ namespace ERP.HRM.Application.Validators.HR
                 .GreaterThanOrEqualTo(0).WithMessage("Years of experience must be greater than or equal to 0")
                 .LessThanOrEqualTo(70).WithMessage("Years of experience cannot exceed 70");
 
-            When(x => !string.IsNullOrEmpty(x.LastAssessmentDate.ToString()), () =>
+            When(x => x.LastAssessmentDate.HasValue, () =>
             {
-                RuleFor(x => x.LastAssessmentDate)
-                    .LessThanOrEqualTo(DateTime.UtcNow.Date).WithMessage("Last assessment date cannot be in the future");
+                RuleFor(x => x.LastAssessmentDate!)
+                    .LessThanOrEqualTo(DateTime.UtcNow).WithMessage("Last assessment date cannot be in the future");
             });
         }
     }
@@ -38,11 +38,17 @@ namespace ERP.HRM.Application.Validators.HR
     {
         public UpdateEmployeeSkillMatrixDtoValidator()
         {
-            RuleFor(x => x.Level)
-                .InclusiveBetween(1, 5).WithMessage("Level must be between 1 (Beginner) and 5 (Master)");
+            When(x => x.Level.HasValue, () =>
+            {
+                RuleFor(x => x.Level)
+                    .InclusiveBetween(1, 5).WithMessage("Level must be between 1 (Beginner) and 5 (Master)");
+            });
 
-            RuleFor(x => x.YearsOfExperience)
-                .GreaterThanOrEqualTo(0).WithMessage("Years of experience must be greater than or equal to 0");
+            When(x => x.YearsOfExperience.HasValue, () =>
+            {
+                RuleFor(x => x.YearsOfExperience)
+                    .GreaterThanOrEqualTo(0).WithMessage("Years of experience must be greater than or equal to 0");
+            });
 
             When(x => x.AssessmentScore.HasValue, () =>
             {

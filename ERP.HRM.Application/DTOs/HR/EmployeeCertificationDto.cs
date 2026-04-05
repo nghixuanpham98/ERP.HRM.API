@@ -24,6 +24,15 @@ namespace ERP.HRM.Application.DTOs.HR
         public DateOnly IssueDate { get; set; }
         public DateOnly? ExpiryDate { get; set; }
         public string? DocumentUrl { get; set; }
+        public string Status { get; set; } = "Active";
         public bool IsRequired { get; set; }
+    }
+
+    public class UpdateEmployeeCertificationDto
+    {
+        public int EmployeeCertificationId { get; set; }
+        public string? CertificationName { get; set; }
+        public string? Status { get; set; }
+        public DateOnly? ExpiryDate { get; set; }
     }
 }

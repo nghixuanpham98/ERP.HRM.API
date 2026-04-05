@@ -69,7 +69,8 @@ namespace ERP.HRM.Infrastructure.Migrations
                     ModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     DepartmentCode = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false, defaultValue: "DPT"),
                     ParentDepartmentId = table.Column<int>(type: "int", nullable: true),
-                    HeadOfDepartmentId = table.Column<int>(type: "int", nullable: true)
+                    HeadOfDepartmentId = table.Column<int>(type: "int", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {
@@ -91,7 +92,8 @@ namespace ERP.HRM.Infrastructure.Migrations
                     ModifiedBy = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     PositionCode = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false, defaultValue: "POS"),
                     Level = table.Column<int>(type: "int", nullable: true, defaultValue: 1),
-                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true)
+                    Description = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false, defaultValue: false)
                 },
                 constraints: table =>
                 {

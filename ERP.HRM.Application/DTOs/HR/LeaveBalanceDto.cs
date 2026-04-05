@@ -24,6 +24,7 @@ namespace ERP.HRM.Application.DTOs.HR
         public decimal AllocatedDays { get; set; }
         public decimal CarriedOverDays { get; set; } = 0;
         public decimal CarryOverLimit { get; set; } = 5;
+        public DateTime? ExpiryDate { get; set; }
         public string? Notes { get; set; }
     }
 
@@ -33,6 +34,7 @@ namespace ERP.HRM.Application.DTOs.HR
         public decimal? AllocatedDays { get; set; }
         public decimal? UsedDays { get; set; }
         public decimal? CarriedOverDays { get; set; }
+        public DateTime? ExpiryDate { get; set; }
         public string? Notes { get; set; }
     }
 }

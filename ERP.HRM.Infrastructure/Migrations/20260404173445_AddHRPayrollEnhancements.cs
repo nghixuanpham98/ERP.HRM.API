@@ -707,7 +707,7 @@ namespace ERP.HRM.Infrastructure.Migrations
                         column: x => x.ProductionStageId,
                         principalTable: "ProductionStages",
                         principalColumn: "ProductionStageId",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.NoAction);
                     table.ForeignKey(
                         name: "FK_ProductionOutputV2_Products_ProductId",
                         column: x => x.ProductId,

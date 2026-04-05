@@ -20,15 +20,16 @@ namespace ERP.HRM.Application.Validators.HR
 
             RuleFor(x => x.IssueDate)
                 .NotEmpty().WithMessage("Issue date is required")
-                .LessThanOrEqualTo(DateTime.UtcNow.Date).WithMessage("Issue date cannot be in the future");
+                .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow)).WithMessage("Issue date cannot be in the future");
 
             When(x => x.ExpiryDate.HasValue, () =>
             {
                 RuleFor(x => x.ExpiryDate)
-                    .GreaterThan(x => x.IssueDate.Date).WithMessage("Expiry date must be after issue date");
+                    .GreaterThan(x => x.IssueDate).WithMessage("Expiry date must be after issue date");
             });
 
             RuleFor(x => x.Status)
+                .NotEmpty().WithMessage("Status is required")
                 .Must(x => new[] { "Active", "Expired", "Revoked", "Suspended" }.Contains(x))
                 .WithMessage("Invalid status. Must be one of: Active, Expired, Revoked, Suspended");
         }
@@ -38,14 +39,17 @@ namespace ERP.HRM.Application.Validators.HR
     {
         public UpdateEmployeeCertificationDtoValidator()
         {
-            RuleFor(x => x.Status)
-                .Must(x => new[] { "Active", "Expired", "Revoked", "Suspended" }.Contains(x))
-                .WithMessage("Invalid status. Must be one of: Active, Expired, Revoked, Suspended");
+            When(x => !string.IsNullOrEmpty(x.Status), () =>
+            {
+                RuleFor(x => x.Status)
+                    .Must(x => new[] { "Active", "Expired", "Revoked", "Suspended" }.Contains(x!))
+                    .WithMessage("Invalid status. Must be one of: Active, Expired, Revoked, Suspended");
+            });
 
             When(x => x.ExpiryDate.HasValue, () =>
             {
                 RuleFor(x => x.ExpiryDate)
-                    .Must(x => x > DateTime.UtcNow.Date).WithMessage("Expiry date must be in the future");
+                    .GreaterThan(DateOnly.FromDateTime(DateTime.UtcNow)).WithMessage("Expiry date must be in the future");
             });
         }
     }

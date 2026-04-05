@@ -28,8 +28,11 @@ namespace ERP.HRM.Application.Validators.HR
                 .GreaterThanOrEqualTo(0).WithMessage("Carry over limit must be greater than or equal to 0")
                 .LessThanOrEqualTo(x => x.AllocatedDays).WithMessage("Carry over limit cannot exceed allocated days");
 
-            RuleFor(x => x.ExpiryDate)
-                .GreaterThan(DateTime.UtcNow.Date).WithMessage("Expiry date must be in the future");
+            When(x => x.ExpiryDate.HasValue, () =>
+            {
+                RuleFor(x => x.ExpiryDate)
+                    .GreaterThan(DateTime.UtcNow).WithMessage("Expiry date must be in the future");
+            });
         }
     }
 
@@ -37,16 +40,22 @@ namespace ERP.HRM.Application.Validators.HR
     {
         public UpdateLeaveBalanceDtoValidator()
         {
-            RuleFor(x => x.UsedDays)
-                .GreaterThanOrEqualTo(0).WithMessage("Used days must be greater than or equal to 0");
+            When(x => x.UsedDays.HasValue, () =>
+            {
+                RuleFor(x => x.UsedDays)
+                    .GreaterThanOrEqualTo(0).WithMessage("Used days must be greater than or equal to 0");
+            });
 
-            RuleFor(x => x.CarriedOverDays)
-                .GreaterThanOrEqualTo(0).WithMessage("Carried over days must be greater than or equal to 0");
+            When(x => x.CarriedOverDays.HasValue, () =>
+            {
+                RuleFor(x => x.CarriedOverDays)
+                    .GreaterThanOrEqualTo(0).WithMessage("Carried over days must be greater than or equal to 0");
+            });
 
             When(x => x.ExpiryDate.HasValue, () =>
             {
                 RuleFor(x => x.ExpiryDate)
-                    .Must(x => x > DateTime.UtcNow.Date).WithMessage("Expiry date must be in the future");
+                    .GreaterThan(DateTime.UtcNow).WithMessage("Expiry date must be in the future");
             });
         }
     }

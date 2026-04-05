@@ -32,13 +32,6 @@ namespace ERP.HRM.Infrastructure.Migrations
                 type: "int",
                 nullable: true);
 
-            migrationBuilder.AddColumn<bool>(
-                name: "IsDeleted",
-                table: "Departments",
-                type: "bit",
-                nullable: false,
-                defaultValue: false);
-
             migrationBuilder.CreateTable(
                 name: "EmployeeRecords",
                 columns: table => new

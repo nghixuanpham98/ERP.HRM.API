@@ -23,6 +23,8 @@ namespace ERP.HRM.Application.DTOs.HR
         public string? Category { get; set; }
         public decimal DurationHours { get; set; }
         public DateOnly StartDate { get; set; }
+        public DateOnly? CompletionDate { get; set; }
+        public string Status { get; set; } = "Pending";
         public decimal? TrainingCost { get; set; }
     }
 

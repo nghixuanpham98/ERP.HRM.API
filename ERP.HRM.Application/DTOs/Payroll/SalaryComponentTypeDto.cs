@@ -1,4 +1,4 @@
-namespace ERP.HRM.Application.DTOs.HR
+namespace ERP.HRM.Application.DTOs.Payroll
 {
     public class SalaryComponentTypeDto
     {

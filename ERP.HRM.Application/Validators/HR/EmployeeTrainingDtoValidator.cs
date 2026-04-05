@@ -31,14 +31,15 @@ namespace ERP.HRM.Application.Validators.HR
             When(x => x.CompletionDate.HasValue, () =>
             {
                 RuleFor(x => x.CompletionDate)
-                    .GreaterThanOrEqualTo(x => x.StartDate.Date).WithMessage("Completion date must be on or after start date");
+                    .GreaterThanOrEqualTo(x => x.StartDate).WithMessage("Completion date must be on or after start date");
             });
 
             RuleFor(x => x.TrainingCost)
                 .GreaterThanOrEqualTo(0).WithMessage("Training cost must be greater than or equal to 0");
 
             RuleFor(x => x.Status)
-                .Must(x => new[] { "Scheduled", "InProgress", "Completed", "Cancelled", "Failed" }.Contains(x))
+                .NotEmpty().WithMessage("Status is required")
+                .Must(x => new[] { "Pending", "InProgress", "Completed", "Cancelled", "Failed" }.Contains(x))
                 .WithMessage("Invalid status");
         }
     }
@@ -47,14 +48,17 @@ namespace ERP.HRM.Application.Validators.HR
     {
         public UpdateEmployeeTrainingDtoValidator()
         {
-            RuleFor(x => x.Status)
-                .Must(x => new[] { "Scheduled", "InProgress", "Completed", "Cancelled", "Failed" }.Contains(x))
-                .WithMessage("Invalid status");
+            When(x => !string.IsNullOrEmpty(x.Status), () =>
+            {
+                RuleFor(x => x.Status)
+                    .Must(x => new[] { "Pending", "InProgress", "Completed", "Cancelled", "Failed" }.Contains(x!))
+                    .WithMessage("Invalid status");
+            });
 
             When(x => x.CompletionDate.HasValue, () =>
             {
                 RuleFor(x => x.CompletionDate)
-                    .GreaterThan(DateTime.UtcNow.AddYears(-5)).WithMessage("Completion date seems invalid");
+                    .LessThanOrEqualTo(DateOnly.FromDateTime(DateTime.UtcNow)).WithMessage("Completion date cannot be in the future");
             });
         }
     }

@@ -35,6 +35,8 @@ namespace ERP.HRM.Application.DTOs.HR
         public string? OverallComments { get; set; }
         public string? Strengths { get; set; }
         public string? AreasForImprovement { get; set; }
+        public string? PromotionRecommendation { get; set; }
+        public string? Comments { get; set; }
         public string? GoalsAchieved { get; set; }
         public string? GoalsForNext { get; set; }
         public string? TrainingRecommendations { get; set; }
@@ -45,6 +47,7 @@ namespace ERP.HRM.Application.DTOs.HR
         public int PerformanceAppraisalId { get; set; }
         public decimal? OverallRatingScore { get; set; }
         public string? OverallComments { get; set; }
+        public string? Comments { get; set; }
         public string? Status { get; set; }
     }
 }

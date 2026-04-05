@@ -24,6 +24,10 @@ namespace ERP.HRM.Application.DTOs.HR
         public int Level { get; set; }
         public decimal YearsOfExperience { get; set; }
         public bool IsRequired { get; set; }
+        public DateTime? LastAssessmentDate { get; set; }
+        public DateTime? NextAssessmentDueDate { get; set; }
+        public string? AssessorName { get; set; }
+        public decimal? AssessmentScore { get; set; }
     }
 
     public class UpdateEmployeeSkillMatrixDto
