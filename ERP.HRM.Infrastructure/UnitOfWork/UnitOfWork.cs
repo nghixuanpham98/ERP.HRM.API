@@ -36,6 +36,31 @@ namespace ERP.HRM.Infrastructure.UnitOfWork
         private IJobProductPricingRepository _jobProductPricingRepository;
         private IProductionOutputV2Repository _productionOutputV2Repository;
         private ISalaryComponentRepository _salaryComponentRepository;
+        private ILeaveBalanceRepository _leaveBalanceRepository;
+        private ILeaveApprovalWorkflowRepository _leaveApprovalWorkflowRepository;
+        private IContractHistoryRepository _contractHistoryRepository;
+        private ISalaryComponentTypeRepository _salaryComponentTypeRepository;
+        private ISalaryComponentValueRepository _salaryComponentValueRepository;
+        private ISalaryHistoryRepository _salaryHistoryRepository;
+        private ITaxExemptionRepository _taxExemptionRepository;
+        private ICumulativeTaxRecordRepository _cumulativeTaxRecordRepository;
+        private IPayrollExceptionRepository _payrollExceptionRepository;
+        private IProductionInspectionRepository _productionInspectionRepository;
+        private IEmployeeCertificationRepository _employeeCertificationRepository;
+        private IEmployeeTrainingRepository _employeeTrainingRepository;
+        private IEmployeeSkillMatrixRepository _employeeSkillMatrixRepository;
+        private IPerformanceAppraisalRepository _performanceAppraisalRepository;
+        private IEmploymentContractRepository _employmentContractRepository;
+        private ILeaveRequestRepository _leaveRequestRepository;
+        private IPersonnelTransferRepository _personnelTransferRepository;
+        private IResignationDecisionRepository _resignationDecisionRepository;
+        private IFamilyDependentRepository _familyDependentRepository;
+        private IEmployeeRecordRepository _employeeRecordRepository;
+        private ISalaryAdjustmentDecisionRepository _salaryAdjustmentDecisionRepository;
+        private IInsuranceTierRepository _insuranceTierRepository;
+        private IInsuranceParticipationRepository _insuranceParticipationRepository;
+        private ITaxBracketRepository _taxBracketRepository;
+        private ISalaryGradeRepository _salaryGradeRepository;
 
         public UnitOfWork(ERPDbContext context)
         {
@@ -92,6 +117,81 @@ namespace ERP.HRM.Infrastructure.UnitOfWork
 
         public ISalaryComponentRepository SalaryComponentRepository
             => _salaryComponentRepository ??= new SalaryComponentRepository(_context);
+
+        public ILeaveBalanceRepository LeaveBalanceRepository
+            => _leaveBalanceRepository ??= new LeaveBalanceRepository(_context);
+
+        public ILeaveApprovalWorkflowRepository LeaveApprovalWorkflowRepository
+            => _leaveApprovalWorkflowRepository ??= new LeaveApprovalWorkflowRepository(_context);
+
+        public IContractHistoryRepository ContractHistoryRepository
+            => _contractHistoryRepository ??= new ContractHistoryRepository(_context);
+
+        public ISalaryComponentTypeRepository SalaryComponentTypeRepository
+            => _salaryComponentTypeRepository ??= new SalaryComponentTypeRepository(_context);
+
+        public ISalaryComponentValueRepository SalaryComponentValueRepository
+            => _salaryComponentValueRepository ??= new SalaryComponentValueRepository(_context);
+
+        public ISalaryHistoryRepository SalaryHistoryRepository
+            => _salaryHistoryRepository ??= new SalaryHistoryRepository(_context);
+
+        public ITaxExemptionRepository TaxExemptionRepository
+            => _taxExemptionRepository ??= new TaxExemptionRepository(_context);
+
+        public ICumulativeTaxRecordRepository CumulativeTaxRecordRepository
+            => _cumulativeTaxRecordRepository ??= new CumulativeTaxRecordRepository(_context);
+
+        public IPayrollExceptionRepository PayrollExceptionRepository
+            => _payrollExceptionRepository ??= new PayrollExceptionRepository(_context);
+
+        public IProductionInspectionRepository ProductionInspectionRepository
+            => _productionInspectionRepository ??= new ProductionInspectionRepository(_context);
+
+        public IEmployeeCertificationRepository EmployeeCertificationRepository
+            => _employeeCertificationRepository ??= new EmployeeCertificationRepository(_context);
+
+        public IEmployeeTrainingRepository EmployeeTrainingRepository
+            => _employeeTrainingRepository ??= new EmployeeTrainingRepository(_context);
+
+        public IEmployeeSkillMatrixRepository EmployeeSkillMatrixRepository
+            => _employeeSkillMatrixRepository ??= new EmployeeSkillMatrixRepository(_context);
+
+        public IPerformanceAppraisalRepository PerformanceAppraisalRepository
+            => _performanceAppraisalRepository ??= new PerformanceAppraisalRepository(_context);
+
+        public IEmploymentContractRepository EmploymentContractRepository
+            => _employmentContractRepository ??= new EmploymentContractRepository(_context);
+
+        public ILeaveRequestRepository LeaveRequestRepository
+            => _leaveRequestRepository ??= new LeaveRequestRepository(_context);
+
+        public IPersonnelTransferRepository PersonnelTransferRepository
+            => _personnelTransferRepository ??= new PersonnelTransferRepository(_context);
+
+        public IResignationDecisionRepository ResignationDecisionRepository
+            => _resignationDecisionRepository ??= new ResignationDecisionRepository(_context);
+
+        public IFamilyDependentRepository FamilyDependentRepository
+            => _familyDependentRepository ??= new FamilyDependentRepository(_context);
+
+        public IEmployeeRecordRepository EmployeeRecordRepository
+            => _employeeRecordRepository ??= new EmployeeRecordRepository(_context);
+
+        public ISalaryAdjustmentDecisionRepository SalaryAdjustmentDecisionRepository
+            => _salaryAdjustmentDecisionRepository ??= new SalaryAdjustmentDecisionRepository(_context);
+
+        public IInsuranceTierRepository InsuranceTierRepository
+            => _insuranceTierRepository ??= new InsuranceTierRepository(_context);
+
+        public IInsuranceParticipationRepository InsuranceParticipationRepository
+            => _insuranceParticipationRepository ??= new InsuranceParticipationRepository(_context);
+
+        public ITaxBracketRepository TaxBracketRepository
+            => _taxBracketRepository ??= new TaxBracketRepository(_context);
+
+        public ISalaryGradeRepository SalaryGradeRepository
+            => _salaryGradeRepository ??= new SalaryGradeRepository(_context);
 
         /// <summary>
         /// Saves all changes made in the DbContext to the database

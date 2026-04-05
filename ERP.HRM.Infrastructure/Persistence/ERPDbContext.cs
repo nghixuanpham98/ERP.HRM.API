@@ -78,6 +78,35 @@ namespace ERP.HRM.API
 
         public virtual DbSet<SalaryComponent> SalaryComponents { get; set; }
 
+        // New DbSets for enhanced HR and Payroll features
+        public virtual DbSet<LeaveBalance> LeaveBalances { get; set; }
+
+        public virtual DbSet<LeaveApprovalWorkflow> LeaveApprovalWorkflows { get; set; }
+
+        public virtual DbSet<ContractHistory> ContractHistories { get; set; }
+
+        public virtual DbSet<SalaryComponentType> SalaryComponentTypes { get; set; }
+
+        public virtual DbSet<SalaryComponentValue> SalaryComponentValues { get; set; }
+
+        public virtual DbSet<SalaryHistory> SalaryHistories { get; set; }
+
+        public virtual DbSet<TaxExemption> TaxExemptions { get; set; }
+
+        public virtual DbSet<CumulativeTaxRecord> CumulativeTaxRecords { get; set; }
+
+        public virtual DbSet<PayrollException> PayrollExceptions { get; set; }
+
+        public virtual DbSet<ProductionInspection> ProductionInspections { get; set; }
+
+        public virtual DbSet<EmployeeCertification> EmployeeCertifications { get; set; }
+
+        public virtual DbSet<EmployeeTraining> EmployeeTrainings { get; set; }
+
+        public virtual DbSet<EmployeeSkillMatrix> EmployeeSkillMatrices { get; set; }
+
+        public virtual DbSet<PerformanceAppraisal> PerformanceAppraisals { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
             => optionsBuilder.UseSqlServer("Name=DefaultConnection");

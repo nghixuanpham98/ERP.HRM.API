@@ -15,13 +15,6 @@ namespace ERP.HRM.Infrastructure.Migrations
                 name: "Role",
                 table: "AspNetUsers");
 
-            migrationBuilder.AddColumn<bool>(
-                name: "IsDeleted",
-                table: "Positions",
-                type: "bit",
-                nullable: false,
-                defaultValue: false);
-
             migrationBuilder.AlterColumn<bool>(
                 name: "IsDeleted",
                 table: "Employees",
@@ -938,10 +931,6 @@ namespace ERP.HRM.Infrastructure.Migrations
             migrationBuilder.DropIndex(
                 name: "IX_Employees_SalaryGradeId",
                 table: "Employees");
-
-            migrationBuilder.DropColumn(
-                name: "IsDeleted",
-                table: "Positions");
 
             migrationBuilder.DropColumn(
                 name: "SalaryGradeId",

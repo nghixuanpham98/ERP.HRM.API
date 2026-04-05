@@ -8,6 +8,6 @@ namespace ERP.HRM.Application.Interfaces.Repositories
 {
     public interface IPagedRepository<T>
     {
-        Task<(IEnumerable<T>, int)> GetPagedAsync(int pageNumber, int pageSize);
+        Task<(IEnumerable<T> Items, int TotalCount)> GetPagedAsync(int pageNumber, int pageSize);
     }
 }

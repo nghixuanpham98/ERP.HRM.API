@@ -28,6 +28,31 @@ namespace ERP.HRM.Domain.Interfaces.Repositories
         IJobProductPricingRepository JobProductPricingRepository { get; }
         IProductionOutputV2Repository ProductionOutputV2Repository { get; }
         ISalaryComponentRepository SalaryComponentRepository { get; }
+        ILeaveBalanceRepository LeaveBalanceRepository { get; }
+        ILeaveApprovalWorkflowRepository LeaveApprovalWorkflowRepository { get; }
+        IContractHistoryRepository ContractHistoryRepository { get; }
+        ISalaryComponentTypeRepository SalaryComponentTypeRepository { get; }
+        ISalaryComponentValueRepository SalaryComponentValueRepository { get; }
+        ISalaryHistoryRepository SalaryHistoryRepository { get; }
+        ITaxExemptionRepository TaxExemptionRepository { get; }
+        ICumulativeTaxRecordRepository CumulativeTaxRecordRepository { get; }
+        IPayrollExceptionRepository PayrollExceptionRepository { get; }
+        IProductionInspectionRepository ProductionInspectionRepository { get; }
+        IEmployeeCertificationRepository EmployeeCertificationRepository { get; }
+        IEmployeeTrainingRepository EmployeeTrainingRepository { get; }
+        IEmployeeSkillMatrixRepository EmployeeSkillMatrixRepository { get; }
+        IPerformanceAppraisalRepository PerformanceAppraisalRepository { get; }
+        IEmploymentContractRepository EmploymentContractRepository { get; }
+        ILeaveRequestRepository LeaveRequestRepository { get; }
+        IPersonnelTransferRepository PersonnelTransferRepository { get; }
+        IResignationDecisionRepository ResignationDecisionRepository { get; }
+        IFamilyDependentRepository FamilyDependentRepository { get; }
+        IEmployeeRecordRepository EmployeeRecordRepository { get; }
+        ISalaryAdjustmentDecisionRepository SalaryAdjustmentDecisionRepository { get; }
+        IInsuranceTierRepository InsuranceTierRepository { get; }
+        IInsuranceParticipationRepository InsuranceParticipationRepository { get; }
+        ITaxBracketRepository TaxBracketRepository { get; }
+        ISalaryGradeRepository SalaryGradeRepository { get; }
 
         /// <summary>
         /// Saves all changes made in this context to the database
